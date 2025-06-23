@@ -1,0 +1,15 @@
+{
+  "name": "deer-ai-research",
+  "version": "1.0.0",
+  "description": "AI Research Assistant with Multi-Agent System",
+  "scripts": {
+    "install-python-deps": "python -m pip install --upgrade pip && python -m pip install -r requirements.txt",
+    "dev": "python main.py --interactive",
+    "start": "python server.py",
+    "web": "cd web && npm run dev",
+    "setup": "npm run install-python-deps"
+  },
+  "dependencies": {
+    "task-master-ai": "^0.18.0"
+  }
+}

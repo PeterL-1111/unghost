@@ -476,12 +476,16 @@ async def researcher_node(
     state: State, config: RunnableConfig
 ) -> Command[Literal["research_team"]]:
     """Researcher node that answers the steps with research type."""
+    # Start with default tools that are always available
     default_tools = [
         crawl_tool,
         get_web_search_tool(Configuration.from_runnable_config(config).max_search_results),
-        get_retriever_tool(),
     ]
-    
+
+    # Conditionally add the retriever tool only if there are resources to search
+    if state.get("resources"):
+        default_tools.append(get_retriever_tool(state["resources"]))
+
     # Add LinkedIn scraper for PersonaForge research
     from src.mcp_tools.linkedin_profile_scraper import linkedin_profile_scraper
     from langchain_core.tools import tool

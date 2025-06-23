@@ -2,13 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 import json
-import os
-import sys
-from typing import Dict, List, Optional, Any
+from typing import Dict, Any
 
 from mcp.server.fastmcp import FastMCP
-from mcp.types import Tool
-
+from src.tools.search import LoggedTavilySearch
+from src.llms.llm import get_llm_by_type
 
 # Initialize the MCP server
 mcp = FastMCP("Company Information Tool")
@@ -19,94 +17,76 @@ def company_information_retriever(
     company_name: str
 ) -> Dict[str, Any]:
     """
-    Retrieves structured data about a company including industry, size, recent news, funding, products, and more.
-    
+    Retrieves structured data about a company by performing a live web search
+    and using an AI to extract key business information.
+
     Args:
-        company_name: Name of the company to research
-    
+        company_name: Name of the company to research.
+
     Returns:
-        A dictionary containing comprehensive company information
+        A dictionary containing comprehensive company information.
     """
-    # For demo purposes, return mock data
-    # In production, this would use proper company data APIs
-    mock_data = _get_mock_company_data(company_name)
-    
-    return mock_data
+    print(f"INFO: Starting live company information retrieval for: {company_name}")
+    search_results = _perform_company_search(company_name)
+    if not search_results:
+        print(f"WARNING: No information found for company: {company_name}.")
+        return {"error": "No public information found for the company."}
+
+    structured_data = _extract_company_data_with_ai(search_results, company_name)
+    return structured_data
 
 
-def _get_mock_company_data(company_name: str) -> Dict[str, Any]:
-    """Generate mock company data for demonstration purposes."""
-    # This is a simplified mock implementation
-    # In production, this would be replaced with actual API calls to services like Crunchbase, etc.
+def _perform_company_search(company_name: str) -> list:
+    """Performs a targeted search for official and news-related company information."""
+    # Query designed to find official websites, news, and business data sites like Crunchbase.
+    query = f'"{company_name}" official website OR news OR "about us" OR Crunchbase'
+    print(f"INFO: Executing company search query: {query}")
+
+    search_tool = LoggedTavilySearch(max_results=5)
+    results = search_tool.invoke(query)
     
-    # Default mock data
-    mock_data = {
+    return [result.get("content", "") for result in results if result.get("content")]
+
+
+def _extract_company_data_with_ai(search_results: list, company_name: str) -> Dict[str, Any]:
+    """Uses an AI model to analyze search results and extract structured company data."""
+    print(f"INFO: Using AI to extract structured data for {company_name}.")
+    
+    context = {
         "company_name": company_name,
-        "industry": "Enterprise Software",
-        "size": {
-            "employees": "500-1000",
-            "revenue_range": "$50M-$100M annually"
-        },
-        "recent_news": [
-            {
-                "title": f"{company_name} Announces New AI-Powered Analytics Platform",
-                "date": "2 weeks ago",
-                "source": "TechCrunch",
-                "url": "https://techcrunch.com/example-article"
-            },
-            {
-                "title": f"{company_name} Expands European Operations with New London Office",
-                "date": "1 month ago",
-                "source": "Business Insider",
-                "url": "https://businessinsider.com/example-article"
-            },
-            {
-                "title": f"{company_name} Named to Fast Company's Most Innovative Companies List",
-                "date": "2 months ago",
-                "source": "Fast Company",
-                "url": "https://fastcompany.com/example-article"
-            }
-        ],
-        "funding": [
-            {
-                "round": "Series C",
-                "amount": "$75M",
-                "date": "1 year ago",
-                "investors": ["Accel Partners", "Sequoia Capital", "Andreessen Horowitz"]
-            },
-            {
-                "round": "Series B",
-                "amount": "$30M",
-                "date": "3 years ago",
-                "investors": ["Accel Partners", "Sequoia Capital"]
-            }
-        ],
-        "products_services": [
-            {
-                "name": "Enterprise Analytics Suite",
-                "description": "Comprehensive data analytics platform for large enterprises"
-            },
-            {
-                "name": "DataFlow",
-                "description": "Real-time data processing and visualization tool"
-            },
-            {
-                "name": "SecureBI",
-                "description": "Secure business intelligence solution with advanced permissions"
-            }
-        ],
-        "mission_vision": "To empower organizations with data-driven insights that drive innovation and growth.",
-        "key_challenges": [
-            "Scaling operations to meet growing demand",
-            "Integrating AI capabilities across product suite",
-            "Expanding into new international markets",
-            "Competing with larger, established players"
-        ],
-        "competitors": ["Tableau", "Microsoft Power BI", "Looker", "Domo"],
-        "company_url": f"https://www.{company_name.lower().replace(' ', '')}.com"
+        "search_results": "\n---\n".join(search_results)
     }
+
+    prompt_content = f"""
+        Objective: Analyze the provided web search results for the company '{company_name}' and extract key business information into a structured JSON format.
+
+        SEARCH RESULTS:
+        ---
+        {context['search_results']}
+        ---
+
+        Based *only* on the text above, extract the following fields. If a field is not mentioned, use null.
+        - company_name
+        - industry
+        - mission_vision (A summary of their mission, vision, or "about us" statement)
+        - key_products_services (A list of their main products or services)
+        - recent_news (A list of recent news headlines or announcements)
+        - competitors (A list of mentioned competitors)
+        - company_url (The official website URL)
+
+        Respond with ONLY the JSON object.
+    """
     
-    return mock_data
+    messages = [{"role": "user", "content": prompt_content}]
+    llm = get_llm_by_type("basic")
+    
+    try:
+        response = llm.invoke(messages)
+        cleaned_json = response.content.replace("```json\n", "").replace("\n```", "")
+        return json.loads(cleaned_json)
+    except Exception as e:
+        print(f"ERROR: Failed to extract company data with AI. Error: {e}")
+        return {"error": "AI data extraction for company failed.", "details": str(e)}
 
 
 def main():

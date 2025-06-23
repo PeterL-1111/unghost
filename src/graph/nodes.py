@@ -475,32 +475,46 @@ async def _setup_and_execute_agent_step(
 async def researcher_node(
     state: State, config: RunnableConfig
 ) -> Command[Literal["research_team"]]:
-    """Researcher node that do research"""
-    logger.info("Researcher node is researching.")
-    configurable = Configuration.from_runnable_config(config)
-    tools = [get_web_search_tool(configurable.max_search_results), crawl_tool]
-    retriever_tool = get_retriever_tool(state.get("resources", []))
-    if retriever_tool:
-        tools.insert(0, retriever_tool)
-    logger.info(f"Researcher tools: {tools}")
+    """Researcher node that answers the steps with research type."""
+    default_tools = [
+        crawl_tool,
+        get_web_search_tool(Configuration.from_runnable_config(config).max_search_results),
+        get_retriever_tool(),
+    ]
+    
+    # Add LinkedIn scraper for PersonaForge research
+    from src.mcp_tools.linkedin_profile_scraper import linkedin_profile_scraper
+    from langchain_core.tools import tool
+    
+    @tool
+    def linkedin_research_tool(person_name: str, company_name: str = None, job_title: str = None):
+        """Research LinkedIn profile for persona insights."""
+        return linkedin_profile_scraper(person_name, company_name, job_title)
+    
+    default_tools.append(linkedin_research_tool)
+    
     return await _setup_and_execute_agent_step(
-        state,
-        config,
-        "researcher",
-        tools,
+        state, config, "researcher", default_tools
+    )
+
+
+async def strategizer_node(
+    state: State, config: RunnableConfig
+) -> Command[Literal["research_team"]]:
+    """Strategizer node that formulates outreach strategy and drafts messages."""
+    default_tools = [python_repl_tool]
+    return await _setup_and_execute_agent_step(
+        state, config, "strategizer", default_tools
     )
 
 
 async def coder_node(
     state: State, config: RunnableConfig
 ) -> Command[Literal["research_team"]]:
-    """Coder node that do code analysis."""
-    logger.info("Strategizer node is formulating strategy.")
+    """Coder node that answers the steps with processing type."""
+    default_tools = [python_repl_tool]
     return await _setup_and_execute_agent_step(
-        state,
-        config,
-        "strategizer",
-        [python_repl_tool],
+        state, config, "coder", default_tools
     )
 
 

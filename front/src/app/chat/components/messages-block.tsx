@@ -1,11 +1,10 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { motion } from "framer-motion";
 import { FastForward, Play } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
-import { RainbowText } from "~/components/deer-flow/rainbow-text";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -13,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { RainbowText } from "~/components/unghost-agent/rainbow-text";
 import { fastForwardReplay } from "~/core/api";
 import { useReplayMetadata } from "~/core/api/hooks";
 import type { Option, Resource } from "~/core/messages";
@@ -140,8 +140,8 @@ export function MessagesBlock({ className }: { className?: string }) {
                       transition={{ duration: 0.3 }}
                     >
                       <video
-                        // Walking deer animation, designed by @liangzhaojun. Thank you for creating it!
-                        src="/images/walking_deer.webm"
+                        // Walking ghost animation, designed by @liangzhaojun. Thank you for creating it!
+                        src="/images/walking_ghost.webm"
                         autoPlay
                         loop
                         muted
@@ -158,10 +158,10 @@ export function MessagesBlock({ className }: { className?: string }) {
                     <CardDescription>
                       <RainbowText animated={responding}>
                         {responding
-                          ? "DeerFlow is now replaying the conversation..."
+                          ? "Unghost Agent is now replaying the conversation..."
                           : replayStarted
                             ? "The replay has been stopped."
-                            : `You're now in DeerFlow's replay mode. Click the "Play" button on the right to start.`}
+                            : `You're now in Unghost Agent's replay mode. Click the "Play" button on the right to start.`}
                       </RainbowText>
                     </CardDescription>
                   </CardHeader>
@@ -194,7 +194,7 @@ export function MessagesBlock({ className }: { className?: string }) {
                 own question, please{" "}
                 <a
                   className="underline"
-                  href="https://github.com/bytedance/deer-flow"
+                  href="https://github.com/PeterL-1111/deer-flow-fork"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

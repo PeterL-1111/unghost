@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "persona-forge"
+name = "unghost-agent"
 version = "0.1.0"
-description = "PersonaForge - Persona-Driven Outreach Engine"
+description = "Unghost Agent - AI-powered personalized cold outreach message generation"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

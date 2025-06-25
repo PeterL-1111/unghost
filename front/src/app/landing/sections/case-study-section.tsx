@@ -1,8 +1,7 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
-import { Bike, Building, Film, Github, Ham, Home, Pizza } from "lucide-react";
-import { Bot } from "lucide-react";
+import { MessageSquare, TrendingUp, Users, Heart, Briefcase, Handshake, Target, UserCheck } from "lucide-react";
 
 import { BentoCard } from "~/components/magicui/bento-grid";
 
@@ -10,60 +9,60 @@ import { SectionHeader } from "../components/section-header";
 
 const caseStudies = [
   {
-    id: "eiffel-tower-vs-tallest-building",
-    icon: Building,
-    title: "How tall is Eiffel Tower compared to tallest building?",
+    id: "tech-startup-founder-outreach",
+    icon: TrendingUp,
+    title: "Connected with YC startup founder for partnership",
     description:
-      "The research compares the heights and global significance of the Eiffel Tower and Burj Khalifa, and uses Python code to calculate the multiples.",
+      "Leveraged shared interests in AI ethics to craft a personalized message that resulted in a 30-minute discovery call and ongoing partnership discussions.",
   },
   {
-    id: "github-top-trending-repo",
-    icon: Github,
-    title: "What are the top trending repositories on GitHub?",
+    id: "sales-director-enterprise-deal",
+    icon: Briefcase,
+    title: "Secured enterprise sales meeting through LinkedIn research",
     description:
-      "The research utilized MCP services to identify the most popular GitHub repositories and documented them in detail using search engines.",
+      "Used public speaking analysis and recent company announcements to personalize outreach, leading to a $50K enterprise software evaluation.",
   },
   {
-    id: "nanjing-traditional-dishes",
-    icon: Ham,
-    title: "Write an article about Nanjing's traditional dishes",
+    id: "investor-pitch-connection",
+    icon: Target,
+    title: "Got investor meeting using mutual connection strategy",
     description:
-      "The study vividly showcases Nanjing's famous dishes through rich content and imagery, uncovering their hidden histories and cultural significance.",
+      "Identified shared university background and mutual connections to secure a 15-minute pitch meeting with a Series A investor.",
   },
   {
-    id: "rental-apartment-decoration",
-    icon: Home,
-    title: "How to decorate a small rental apartment?",
+    id: "conference-speaker-collaboration",
+    icon: Users,
+    title: "Landed keynote speaker for company event",
     description:
-      "The study provides readers with practical and straightforward methods for decorating apartments, accompanied by inspiring images.",
+      "Researched speaker's latest book and podcast appearances to craft compelling event invitation that resulted in confirmed keynote agreement.",
   },
   {
-    id: "review-of-the-professional",
-    icon: Film,
-    title: "Introduce the movie 'Léon: The Professional'",
+    id: "customer-success-testimonial",
+    icon: Heart,
+    title: "Turned cold prospect into brand advocate",
     description:
-      "The research provides a comprehensive introduction to the movie 'Léon: The Professional', including its plot, characters, and themes.",
+      "Used empathetic messaging around shared industry challenges to build trust, resulting in a customer testimonial and referral program participation.",
   },
   {
-    id: "china-food-delivery",
-    icon: Bike,
-    title: "How do you view the takeaway war in China? (in Chinese)",
+    id: "recruitment-talent-acquisition",
+    icon: UserCheck,
+    title: "Recruited top engineering talent from competitor",
     description:
-      "The research analyzes the intensifying competition between JD and Meituan, highlighting their strategies, technological innovations, and challenges.",
+      "Analyzed GitHub contributions and open source projects to personalize talent acquisition message, leading to successful hire.",
   },
   {
-    id: "ultra-processed-foods",
-    icon: Pizza,
-    title: "Are ultra-processed foods linked to health?",
+    id: "media-influencer-partnership",
+    icon: MessageSquare,
+    title: "Secured influencer partnership through content analysis",
     description:
-      "The research examines the health risks of rising ultra-processed food consumption, urging more research on long-term effects and individual differences.",
+      "Studied influencer's content themes and audience engagement to propose authentic brand partnership that aligned with their values.",
   },
   {
-    id: "ai-twin-insurance",
-    icon: Bot,
-    title: 'Write an article on "Would you insure your AI twin?"',
+    id: "strategic-vendor-negotiation",
+    icon: Handshake,
+    title: "Improved vendor terms through relationship building",
     description:
-      "The research explores the concept of insuring AI twins, highlighting their benefits, risks, ethical considerations, and the evolving regulatory.",
+      "Used LinkedIn activity analysis to find common ground with procurement director, resulting in 20% cost reduction and better contract terms.",
   },
 ];
 
@@ -72,8 +71,8 @@ export function CaseStudySection() {
     <section className="relative container hidden flex-col items-center justify-center md:flex">
       <SectionHeader
         anchor="case-studies"
-        title="Case Studies"
-        description="See DeerFlow in action through replays."
+        title="Success Stories"
+        description="Real results from personalized cold outreach campaigns."
       />
       <div className="grid w-3/4 grid-cols-1 gap-2 sm:w-full sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {caseStudies.map((caseStudy) => (
@@ -84,7 +83,7 @@ export function CaseStudySection() {
                 name: caseStudy.title,
                 description: caseStudy.description,
                 href: `/chat?replay=${caseStudy.id}`,
-                cta: "Click to watch replay",
+                cta: "View outreach strategy",
                 className: "w-full h-full",
               }}
             />

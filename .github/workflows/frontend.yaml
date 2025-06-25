@@ -1,0 +1,44 @@
+name: Frontend Check
+
+on:
+  push:
+    branches: [ 'main' ]
+    paths: [ 'front/**' ]
+  pull_request:
+    branches: [ '*' ]
+    paths: [ 'front/**' ]
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Enable Corepack
+      run: corepack enable
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+        cache-dependency-path: front/pnpm-lock.yaml
+
+    - name: Install dependencies
+      working-directory: front
+      run: pnpm install --frozen-lockfile
+
+    - name: Type check
+      working-directory: front
+      run: pnpm typecheck
+
+    - name: Lint check
+      working-directory: front
+      run: pnpm lint
+
+    - name: Build
+      working-directory: front
+      run: pnpm build 

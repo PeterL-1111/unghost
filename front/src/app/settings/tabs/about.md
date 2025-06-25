@@ -1,26 +1,32 @@
-# 🦌 [About DeerFlow](https://github.com/bytedance/deer-flow)
+# 👻 [About Unghost Agent](https://github.com/PeterL-1111/deer-flow-fork)
 
 > **From Open Source, Back to Open Source**
 
-**DeerFlow** (**D**eep **E**xploration and **E**fficient **R**esearch **Flow**) is a community-driven AI automation framework inspired by the remarkable contributions of the open source community. Our mission is to seamlessly integrate language models with specialized tools for tasks such as web search, crawling, and Python code execution—all while giving back to the community that made this innovation possible.
+**Unghost Agent** is a community-driven AI automation framework designed to revolutionize personalized outreach and research. Inspired by the remarkable contributions of the open source community, our mission is to seamlessly integrate language models with specialized tools for tasks such as web search, crawling, lead generation, and personalized messaging—all while giving back to the community that made this innovation possible.
+
+---
+
+## 👨‍💻 Project Leadership
+
+**Unghost Agent** is developed and maintained by **[Peter Liu](https://github.com/PeterL-1111/)**.
 
 ---
 
 ## 🌟 GitHub Repository
 
-Explore DeerFlow on GitHub: [github.com/bytedance/deer-flow](https://github.com/bytedance/deer-flow)
+Explore Unghost Agent on GitHub: [github.com/PeterL-1111/deer-flow-fork](https://github.com/PeterL-1111/deer-flow-fork)
 
 ---
 
 ## 📜 License
 
-DeerFlow is proudly open source and distributed under the **MIT License**.
+Unghost Agent is proudly open source and distributed under the **MIT License**.
 
 ---
 
 ## 🙌 Acknowledgments
 
-We extend our heartfelt gratitude to the open source projects and contributors who have made DeerFlow a reality. We truly stand on the shoulders of giants.
+We extend our heartfelt gratitude to **Henry Li** and the original **DeerFlow contributors** for their foundational work that made Unghost Agent possible. We also acknowledge the open source projects and contributors who have made this evolution a reality. We truly stand on the shoulders of giants.
 
 ### Core Frameworks
 - **[LangChain](https://github.com/langchain-ai/langchain)**: A phenomenal framework that powers our LLM interactions and chains.
@@ -34,12 +40,11 @@ We extend our heartfelt gratitude to the open source projects and contributors w
 - **[React Markdown](https://www.npmjs.com/package/react-markdown)**: Exceptional markdown rendering with customizability.
 - **[SToneX](https://github.com/stonexer)**: For his invaluable contribution to token-by-token visual effects.
 
-These outstanding projects form the backbone of DeerFlow and exemplify the transformative power of open source collaboration.
+These outstanding projects form the backbone of Unghost Agent and exemplify the transformative power of open source collaboration.
 
-### Special Thanks
-Finally, we want to express our heartfelt gratitude to the core authors of `DeerFlow`:
+### Foundational Contributors
+Finally, we want to express our heartfelt gratitude to those who laid the groundwork for `Unghost Agent`:
 
-- **[Daniel Walnut](https://github.com/hetaoBackend/)**
-- **[Henry Li](https://github.com/magiccube/)**
+- **[Henry Li](https://github.com/magiccube/)** and the original **DeerFlow contributors** for their foundational work that enabled this evolution from general research to specialized cold outreach automation.
 
-Without their vision, passion and dedication, `DeerFlow` would not be what it is today.
+Without their vision, passion and dedication, `Unghost Agent` would not be what it is today.

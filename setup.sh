@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# 🦌 DeerFlow - Quick Setup Script
+# 🦌 Unghost Agent - Quick Setup Script
 # This script sets up both backend and frontend environments
 
 set -e  # Exit on any error
 
-echo "🦌 DeerFlow - Starting Setup..."
+echo "🦌 Unghost Agent - Starting Setup..."
 echo "================================"
 
 # Colors for output

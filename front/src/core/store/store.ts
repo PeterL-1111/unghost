@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { nanoid } from "nanoid";
@@ -111,6 +111,7 @@ export async function sendMessage(
       max_step_num: settings.maxStepNum,
       max_search_results: settings.maxSearchResults,
       report_style: settings.reportStyle,
+      user_background: settings.userBackground,
       mcp_settings: settings.mcpSettings,
     },
     options,

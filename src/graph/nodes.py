@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 import json
@@ -302,7 +302,7 @@ def research_team_node(state: State):
 
 
 async def _execute_agent_step(
-    state: State, agent, agent_name: str
+    state: State, agent, agent_name: str, configurable: Configuration
 ) -> Command[Literal["research_team"]]:
     """Helper function to execute a step using the specified agent."""
     current_plan = state.get("current_plan")
@@ -338,7 +338,8 @@ async def _execute_agent_step(
             HumanMessage(
                 content=f"{completed_steps_info}# Current Task\n\n## Title\n\n{current_step.title}\n\n## Description\n\n{current_step.description}\n\n## Locale\n\n{state.get('locale', 'en-US')}"
             )
-        ]
+        ],
+        "report_style": configurable.report_style,
     }
 
     # Add citation reminder for researcher agent
@@ -465,11 +466,11 @@ async def _setup_and_execute_agent_step(
                     )
                     loaded_tools.append(tool)
             agent = create_agent(agent_type, agent_type, loaded_tools, agent_type)
-            return await _execute_agent_step(state, agent, agent_type)
+            return await _execute_agent_step(state, agent, agent_type, configurable)
     else:
         # Use default tools if no MCP servers are configured
         agent = create_agent(agent_type, agent_type, default_tools, agent_type)
-        return await _execute_agent_step(state, agent, agent_type)
+        return await _execute_agent_step(state, agent, agent_type, configurable)
 
 
 async def researcher_node(
@@ -486,16 +487,39 @@ async def researcher_node(
     if state.get("resources"):
         default_tools.append(get_retriever_tool(state["resources"]))
 
-    # Add LinkedIn scraper for PersonaForge research
+    # Add comprehensive research tools for PersonaForge research
     from src.mcp_tools.linkedin_profile_scraper import linkedin_profile_scraper
+    from src.mcp_tools.company_information_tool import company_information_retriever
+    from src.mcp_tools.social_media_activity_tool import social_media_activity_analyzer
+    from src.mcp_tools.public_speaking_publication_tool import public_speaking_publication_tracker
     from langchain_core.tools import tool
     
     @tool
     def linkedin_research_tool(person_name: str, company_name: str = None, job_title: str = None):
-        """Research LinkedIn profile for persona insights."""
+        """Research LinkedIn profile for comprehensive professional insights."""
         return linkedin_profile_scraper(person_name, company_name, job_title)
     
-    default_tools.append(linkedin_research_tool)
+    @tool
+    def company_research_tool(company_name: str):
+        """Research company information for context and personalization."""
+        return company_information_retriever(company_name)
+    
+    @tool
+    def social_media_research_tool(person_name: str, company_name: str = None):
+        """Analyze social media activity for communication style and interests."""
+        return social_media_activity_analyzer(person_name, company_name)
+    
+    @tool
+    def thought_leadership_research_tool(person_name: str, company_name: str = None):
+        """Find public speaking and publications for expertise and influence."""
+        return public_speaking_publication_tracker(person_name, company_name)
+    
+    default_tools.extend([
+        linkedin_research_tool, 
+        company_research_tool, 
+        social_media_research_tool, 
+        thought_leadership_research_tool
+    ])
     
     return await _setup_and_execute_agent_step(
         state, config, "researcher", default_tools
@@ -507,6 +531,41 @@ async def strategizer_node(
 ) -> Command[Literal["research_team"]]:
     """Strategizer node that formulates outreach strategy and drafts messages."""
     default_tools = [python_repl_tool]
+    
+    # Add research tools for strategizer to access gathered persona data
+    from src.mcp_tools.linkedin_profile_scraper import linkedin_profile_scraper
+    from src.mcp_tools.company_information_tool import company_information_retriever
+    from src.mcp_tools.social_media_activity_tool import social_media_activity_analyzer
+    from src.mcp_tools.public_speaking_publication_tool import public_speaking_publication_tracker
+    from langchain_core.tools import tool
+    
+    @tool
+    def linkedin_insights_tool(person_name: str, company_name: str = None, job_title: str = None):
+        """Access LinkedIn profile insights for strategy formulation."""
+        return linkedin_profile_scraper(person_name, company_name, job_title)
+    
+    @tool
+    def company_insights_tool(company_name: str):
+        """Access company information for strategic context."""
+        return company_information_retriever(company_name)
+    
+    @tool
+    def communication_style_tool(person_name: str, company_name: str = None):
+        """Access social media analysis for communication style insights."""
+        return social_media_activity_analyzer(person_name, company_name)
+    
+    @tool
+    def expertise_insights_tool(person_name: str, company_name: str = None):
+        """Access thought leadership data for expertise insights."""
+        return public_speaking_publication_tracker(person_name, company_name)
+    
+    default_tools.extend([
+        linkedin_insights_tool, 
+        company_insights_tool, 
+        communication_style_tool, 
+        expertise_insights_tool
+    ])
+    
     return await _setup_and_execute_agent_step(
         state, config, "strategizer", default_tools
     )
@@ -522,23 +581,5 @@ async def coder_node(
     )
 
 
-def continue_to_running_research_team(state: State):
-    current_plan = state.get("current_plan")
-    if not current_plan or not current_plan.steps:
-        return "planner"
-    if all(step.execution_res for step in current_plan.steps):
-        return "planner"
-    for step in current_plan.steps:
-        if not step.execution_res:
-            break
-    if step.step_type and step.step_type == StepType.RESEARCH:
-        return "researcher"
-    if step.step_type and step.step_type == StepType.PROCESSING:
-        return "coder"
-    if step.step_type and step.step_type == StepType.PERSONA_RESEARCH:
-        return "researcher"
-    if step.step_type and step.step_type == StepType.STRATEGY_FORMULATION:
-        return "coder"  # Using coder node for strategy formulation
-    if step.step_type and step.step_type == StepType.MESSAGE_DRAFTING:
-        return "coder"  # Using coder node for message drafting
-    return "planner"
+# Note: This function has been moved to builder.py where it's actually used.
+# The routing logic is now handled directly in the graph builder.

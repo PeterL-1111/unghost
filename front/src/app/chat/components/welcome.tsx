@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { motion } from "framer-motion";
@@ -19,15 +19,15 @@ export function Welcome({ className }: { className?: string }) {
       <div className="text-muted-foreground px-4 text-center text-lg">
         Welcome to{" "}
         <a
-          href="https://github.com/bytedance/deer-flow"
+          href="https://github.com/PeterL-1111/deer-flow-fork"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:underline"
         >
-          🦌 DeerFlow
+          👻 Unghost Agent
         </a>
-        , a deep research assistant built on cutting-edge language models, helps
-        you search on web, browse information, and handle complex tasks.
+        , an AI-powered personalized outreach assistant built on cutting-edge language models, helps
+        you generate leads, research prospects, and create personalized messages.
       </div>
     </motion.div>
   );

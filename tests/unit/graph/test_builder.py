@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 import pytest
@@ -64,6 +64,39 @@ def test_continue_to_running_research_team_next_coder(mock_state):
     ]
     state = {"current_plan": Plan(steps=steps)}
     assert builder_mod.continue_to_running_research_team(state) == "coder"
+
+
+def test_continue_to_running_research_team_persona_research(mock_state):
+    Step = mock_state["Step"]
+    Plan = mock_state["Plan"]
+    steps = [
+        Step(execution_res=True),
+        Step(execution_res=None, step_type=builder_mod.StepType.PERSONA_RESEARCH),
+    ]
+    state = {"current_plan": Plan(steps=steps)}
+    assert builder_mod.continue_to_running_research_team(state) == "researcher"
+
+
+def test_continue_to_running_research_team_strategy_formulation(mock_state):
+    Step = mock_state["Step"]
+    Plan = mock_state["Plan"]
+    steps = [
+        Step(execution_res=True),
+        Step(execution_res=None, step_type=builder_mod.StepType.STRATEGY_FORMULATION),
+    ]
+    state = {"current_plan": Plan(steps=steps)}
+    assert builder_mod.continue_to_running_research_team(state) == "strategizer"
+
+
+def test_continue_to_running_research_team_message_drafting(mock_state):
+    Step = mock_state["Step"]
+    Plan = mock_state["Plan"]
+    steps = [
+        Step(execution_res=True),
+        Step(execution_res=None, step_type=builder_mod.StepType.MESSAGE_DRAFTING),
+    ]
+    state = {"current_plan": Plan(steps=steps)}
+    assert builder_mod.continue_to_running_research_team(state) == "strategizer"
 
 
 def test_continue_to_running_research_team_default_planner(mock_state):

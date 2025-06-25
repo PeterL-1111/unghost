@@ -1,16 +1,16 @@
-# 🦌 DeerFlow Web UI
+# 👻 Unghost Agent Web UI
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > Originated from Open Source, give back to Open Source.
 
-This is the web UI for [`DeerFlow`](https://github.com/bytedance/deer-flow).
+This is the web UI for [`Unghost Agent`](https://github.com/PeterL-1111/deer-flow-fork).
 
 ## Quick Start
 
 ### Prerequisites
 
-- [`DeerFlow`](https://github.com/bytedance/deer-flow)
+- [`Unghost Agent`](https://github.com/PeterL-1111/deer-flow-fork)
 - Node.js (v22.14.0+)
 - pnpm (v10.6.2+) as package manager
 
@@ -18,7 +18,7 @@ This is the web UI for [`DeerFlow`](https://github.com/bytedance/deer-flow).
 
 Create a `.env` file in the project root and configure the following environment variables:
 
-- `NEXT_PUBLIC_API_URL`: The URL of the deer-flow API.
+- `NEXT_PUBLIC_API_URL`: The URL of the unghost-agent API.
 
 It's always a good idea to start with the given example file, and edit the `.env` file with your own values:
 
@@ -28,7 +28,7 @@ cp .env.example .env
 
 ## How to Install
 
-DeerFlow Web UI uses `pnpm` as its package manager.
+Unghost Agent Web UI uses `pnpm` as its package manager.
 To install the dependencies, run:
 
 ```bash
@@ -66,17 +66,17 @@ First, you need read the [configuration](#configuration) below. Make sure `.env`
 Second, to build a Docker image of your own web server:
 
 ```bash
-docker build --build-arg NEXT_PUBLIC_API_URL=YOUR_DEER-FLOW_API -t deer-flow-web .
+docker build --build-arg NEXT_PUBLIC_API_URL=YOUR_UNGHOST_AGENT_API -t unghost-agent-web .
 ```
 
 Final, start up a docker container running the web server:
 
 ```bash
-# Replace deer-flow-web-app with your preferred container name
-docker run -d -t -p 3000:3000 --env-file .env --name deer-flow-web-app deer-flow-web
+# Replace unghost-agent-web-app with your preferred container name
+docker run -d -t -p 3000:3000 --env-file .env --name unghost-agent-web-app unghost-agent-web
 
 # stop the server
-docker stop deer-flow-web-app
+docker stop unghost-agent-web-app
 ```
 
 ### Docker Compose
@@ -98,7 +98,7 @@ This project is open source and available under the [MIT License](../LICENSE).
 ## Acknowledgments
 
 We extend our heartfelt gratitude to the open source community for their invaluable contributions.
-DeerFlow is built upon the foundation of these outstanding projects:
+Unghost Agent is built upon the foundation of these outstanding projects:
 
 In particular, we want to express our deep appreciation for:
 
@@ -109,4 +109,4 @@ In particular, we want to express our deep appreciation for:
 - [React Markdown](https://www.npmjs.com/package/react-markdown) for their exceptional markdown rendering and customizability
 - Last but not least, special thanks to [SToneX](https://github.com/stonexer) for his great contribution for [token-by-token visual effect](./src/core/rehype/rehype-split-words-into-spans.ts)
 
-These outstanding projects form the backbone of DeerFlow and exemplify the transformative power of open source collaboration.
+These outstanding projects form the backbone of Unghost Agent and exemplify the transformative power of open source collaboration.

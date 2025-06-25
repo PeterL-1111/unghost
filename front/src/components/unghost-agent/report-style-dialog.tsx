@@ -1,8 +1,8 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { useState } from "react";
-import { Check, FileText, Newspaper, Users, GraduationCap } from "lucide-react";
+import { Check, Zap, Shield, Rocket, Heart } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -20,28 +20,28 @@ import { Tooltip } from "./tooltip";
 
 const REPORT_STYLES = [
   {
-    value: "academic" as const,
-    label: "Academic",
-    description: "Formal, objective, and analytical with precise terminology",
-    icon: GraduationCap,
+    value: "aggressive" as const,
+    label: "Aggressive",
+    description: "Bold, direct, and confident - cuts straight to the point",
+    icon: Zap,
   },
   {
-    value: "popular_science" as const,
-    label: "Popular Science",
-    description: "Engaging and accessible for general audience",
-    icon: FileText,
+    value: "conservative" as const,
+    label: "Conservative",
+    description: "Careful, measured, and diplomatic - builds trust gradually",
+    icon: Shield,
   },
   {
-    value: "news" as const,
-    label: "News",
-    description: "Factual, concise, and impartial journalistic style",
-    icon: Newspaper,
+    value: "go_nuts" as const,
+    label: "Go Nuts",
+    description: "Creative, energetic, and wildly memorable - breaks all rules",
+    icon: Rocket,
   },
   {
-    value: "social_media" as const,
-    label: "Social Media",
-    description: "Concise, attention-grabbing, and shareable",
-    icon: Users,
+    value: "friendly" as const,
+    label: "Friendly",
+    description: "Warm, approachable, and empathetic - builds genuine connections",
+    icon: Heart,
   },
 ];
 
@@ -50,7 +50,7 @@ export function ReportStyleDialog() {
   const currentStyle = useSettingsStore((state) => state.general.reportStyle);
 
   const handleStyleChange = (
-    style: "academic" | "popular_science" | "news" | "social_media",
+    style: "aggressive" | "conservative" | "go_nuts" | "friendly",
   ) => {
     setReportStyle(style);
     setOpen(false);
@@ -71,7 +71,7 @@ export function ReportStyleDialog() {
               Writing Style: {currentStyleConfig.label}
             </h3>
             <p>
-              Choose the writing style for your research reports. Different
+              Choose the writing style for your outreach messages. Different
               styles are optimized for different audiences and purposes.
             </p>
           </div>
@@ -90,7 +90,7 @@ export function ReportStyleDialog() {
         <DialogHeader>
           <DialogTitle>Choose Writing Style</DialogTitle>
           <DialogDescription>
-            Select the writing style for your research reports. Each style is
+            Select the writing style for your outreach messages. Each style is
             optimized for different audiences and purposes.
           </DialogDescription>
         </DialogHeader>

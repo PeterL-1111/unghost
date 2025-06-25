@@ -47,13 +47,7 @@ node_modules/
 # OS specific
 .DS_Store
 
-# Task files
-# tasks.json
-# tasks/
-
 # Added by Task Master AI
-tasks.json
-tasks/ 
 
 # AI Coding Assistant Configuration Directories
 .roo/
@@ -64,3 +58,7 @@ tasks/
 .windsurf/
 .windsurfrules
 .roomodes 
+
+# Task files
+# tasks.json
+# tasks/ 

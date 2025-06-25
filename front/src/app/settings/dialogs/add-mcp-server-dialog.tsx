@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { Loader2 } from "lucide-react";
@@ -131,7 +131,7 @@ export function AddMCPServerDialog({
           <DialogTitle>Add New MCP Servers</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          DeerFlow uses the standard JSON MCP config to create a new server.
+          Unghost Agent uses the standard JSON MCP config to create a new server.
           <br />
           Paste your config below and click &quot;Add&quot; to add new servers.
         </DialogDescription>

@@ -1,7 +1,7 @@
-# 🦌 DeerFlow - Project Setup Guide
+# 🦌 Unghost Agent - Project Setup Guide
 
 ## Overview
-DeerFlow is a full-stack application with a Python backend (FastAPI) and a Next.js frontend. This guide will help you set up the development environment.
+Unghost Agent is a full-stack application with a Python backend (FastAPI) and a Next.js frontend. This guide will help you set up the development environment.
 
 ## Prerequisites
 - Python 3.13+ (verified working with 3.13.2)

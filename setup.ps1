@@ -1,10 +1,10 @@
-# 🦌 DeerFlow - Quick Setup Script (PowerShell)
+# 🦌 Unghost Agent - Quick Setup Script (PowerShell)
 # This script sets up both backend and frontend environments on Windows
 
 # Set error handling
 $ErrorActionPreference = "Stop"
 
-Write-Host "🦌 DeerFlow - Starting Setup..." -ForegroundColor Blue
+Write-Host "🦌 Unghost Agent - Starting Setup..." -ForegroundColor Blue
 Write-Host "================================"
 
 # Function to write colored output

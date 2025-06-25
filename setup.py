@@ -70,7 +70,7 @@ def check_env_files():
 
 def main():
     """Main setup function"""
-    print("🦌 DeerFlow Setup")
+    print("🦌 Unghost Agent Setup")
     print("=" * 40)
     
     # Check Python version

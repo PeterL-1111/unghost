@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 import os
@@ -22,8 +22,9 @@ class Configuration:
     max_step_num: int = 3  # Maximum number of steps in a plan
     max_search_results: int = 3  # Maximum number of search results
     mcp_settings: dict = None  # MCP settings, including dynamic loaded tools
-    report_style: str = ReportStyle.ACADEMIC.value  # Report style
+    report_style: str = ReportStyle.FRIENDLY.value  # Report style
     enable_deep_thinking: bool = False  # Whether to enable deep thinking
+    user_background: Optional[str] = None  # User's professional background for personalized outreach
 
     @classmethod
     def from_runnable_config(

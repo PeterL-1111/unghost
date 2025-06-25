@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { LoadingOutlined } from "@ant-design/icons";
@@ -12,15 +12,6 @@ import {
 } from "lucide-react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 
-import { LoadingAnimation } from "~/components/deer-flow/loading-animation";
-import { Markdown } from "~/components/deer-flow/markdown";
-import { RainbowText } from "~/components/deer-flow/rainbow-text";
-import { RollingText } from "~/components/deer-flow/rolling-text";
-import {
-  ScrollContainer,
-  type ScrollContainerRef,
-} from "~/components/deer-flow/scroll-container";
-import { Tooltip } from "~/components/deer-flow/tooltip";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -34,6 +25,15 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "~/components/ui/collapsible";
+import { LoadingAnimation } from "~/components/unghost-agent/loading-animation";
+import { Markdown } from "~/components/unghost-agent/markdown";
+import { RainbowText } from "~/components/unghost-agent/rainbow-text";
+import { RollingText } from "~/components/unghost-agent/rolling-text";
+import {
+  ScrollContainer,
+  type ScrollContainerRef,
+} from "~/components/unghost-agent/scroll-container";
+import { Tooltip } from "~/components/unghost-agent/tooltip";
 import type { Message, Option } from "~/core/messages";
 import {
   closeResearch,

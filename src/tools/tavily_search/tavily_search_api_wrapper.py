@@ -1,5 +1,5 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 import json

@@ -1,10 +1,9 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { Settings } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Tooltip } from "~/components/deer-flow/tooltip";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -17,6 +16,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Tabs, TabsContent } from "~/components/ui/tabs";
+import { Tooltip } from "~/components/unghost-agent/tooltip";
 import { useReplay } from "~/core/replay";
 import {
   type SettingsState,
@@ -101,9 +101,9 @@ export function SettingsDialog() {
       </Tooltip>
       <DialogContent className="sm:max-w-[850px]">
         <DialogHeader>
-          <DialogTitle>DeerFlow Settings</DialogTitle>
+          <DialogTitle>Unghost Agent Settings</DialogTitle>
           <DialogDescription>
-            Manage your DeerFlow settings here.
+            Manage your Unghost Agent settings here.
           </DialogDescription>
         </DialogHeader>
         <Tabs value={activeTabId}>

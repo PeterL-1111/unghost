@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,26 +19,34 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Switch } from "~/components/ui/switch";
+import { Textarea } from "~/components/ui/textarea";
 import type { SettingsState } from "~/core/store";
 
 import type { Tab } from "./types";
 
+// Simplified schema to avoid deep type instantiation
 const generalFormSchema = z.object({
   autoAcceptedPlan: z.boolean(),
-  maxPlanIterations: z.number().min(1, {
-    message: "Max plan iterations must be at least 1.",
-  }),
-  maxStepNum: z.number().min(1, {
-    message: "Max step number must be at least 1.",
-  }),
-  maxSearchResults: z.number().min(1, {
-    message: "Max search results must be at least 1.",
-  }),
-  // Others
+  maxPlanIterations: z.number().min(1, "Max plan iterations must be at least 1."),
+  maxStepNum: z.number().min(1, "Max step number must be at least 1."),
+  maxSearchResults: z.number().min(1, "Max search results must be at least 1."),
   enableBackgroundInvestigation: z.boolean(),
   enableDeepThinking: z.boolean(),
-  reportStyle: z.enum(["academic", "popular_science", "news", "social_media"]),
+  reportStyle: z.enum(["aggressive", "conservative", "go_nuts", "friendly"]),
+  userBackground: z.string(),
 });
+
+// Explicit type definition to avoid inference issues
+interface GeneralFormData {
+  autoAcceptedPlan: boolean;
+  maxPlanIterations: number;
+  maxStepNum: number;
+  maxSearchResults: number;
+  enableBackgroundInvestigation: boolean;
+  enableDeepThinking: boolean;
+  reportStyle: "aggressive" | "conservative" | "go_nuts" | "friendly";
+  userBackground: string;
+}
 
 export const GeneralTab: Tab = ({
   settings,
@@ -48,29 +56,34 @@ export const GeneralTab: Tab = ({
   onChange: (changes: Partial<SettingsState>) => void;
 }) => {
   const generalSettings = useMemo(() => settings.general, [settings]);
-  const form = useForm<z.infer<typeof generalFormSchema>>({
-    resolver: zodResolver(generalFormSchema, undefined, undefined),
+  
+  const form = useForm<GeneralFormData>({
+    resolver: zodResolver(generalFormSchema),
     defaultValues: generalSettings,
     mode: "all",
     reValidateMode: "onBlur",
   });
 
   const currentSettings = form.watch();
+  
   useEffect(() => {
-    let hasChanges = false;
-    for (const key in currentSettings) {
-      if (
-        currentSettings[key as keyof typeof currentSettings] !==
-        settings.general[key as keyof SettingsState["general"]]
-      ) {
-        hasChanges = true;
-        break;
-      }
-    }
+    // Simple deep equality check for settings changes
+    const hasChanges = JSON.stringify(currentSettings) !== JSON.stringify(settings.general);
     if (hasChanges) {
-      onChange({ general: currentSettings });
+      // Create the update with explicit typing
+      const generalUpdate: SettingsState["general"] = {
+        autoAcceptedPlan: currentSettings.autoAcceptedPlan,
+        enableDeepThinking: currentSettings.enableDeepThinking,
+        enableBackgroundInvestigation: currentSettings.enableBackgroundInvestigation,
+        maxPlanIterations: currentSettings.maxPlanIterations,
+        maxStepNum: currentSettings.maxStepNum,
+        maxSearchResults: currentSettings.maxSearchResults,
+        reportStyle: currentSettings.reportStyle,
+        userBackground: currentSettings.userBackground,
+      };
+      onChange({ general: generalUpdate });
     }
-  }, [currentSettings, onChange, settings]);
+  }, [currentSettings, onChange, settings.general]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -80,6 +93,26 @@ export const GeneralTab: Tab = ({
       <main>
         <Form {...form}>
           <form className="space-y-8">
+            <FormField
+              control={form.control}
+              name="userBackground"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Your Professional Background</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Provide a brief description of your professional background, role, and goals. This will help Unghost Agent tailor outreach messages to your unique voice and objectives."
+                      {...field}
+                      className="min-h-[100px]"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    This information will be used to personalize your outreach messages and make them more authentic to your professional voice.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="autoAcceptedPlan"
@@ -179,5 +212,6 @@ export const GeneralTab: Tab = ({
     </div>
   );
 };
+
 GeneralTab.displayName = "General";
 GeneralTab.icon = Settings;

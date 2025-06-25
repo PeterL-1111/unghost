@@ -1,0 +1,74 @@
+name: Full Integration Test
+
+on:
+  push:
+    branches: [ 'main' ]
+  pull_request:
+    branches: [ '*' ]
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    # Backend setup
+    - name: Install the latest version of uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "latest"
+
+    - name: Install backend dependencies
+      run: |
+        uv venv --python 3.12
+        uv pip install -e ".[dev]"
+
+    # Frontend setup
+    - name: Enable Corepack
+      run: corepack enable
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+        cache-dependency-path: front/pnpm-lock.yaml
+
+    - name: Install frontend dependencies
+      working-directory: front
+      run: pnpm install --frozen-lockfile
+
+    # Backend tests
+    - name: Run backend linters
+      run: |
+        source .venv/bin/activate
+        make lint
+
+    - name: Run backend tests
+      run: |
+        source .venv/bin/activate
+        TAVILY_API_KEY=mock-key make test
+
+    # Frontend tests
+    - name: Frontend type check
+      working-directory: front
+      run: pnpm typecheck
+
+    - name: Frontend lint check
+      working-directory: front
+      run: pnpm lint
+
+    - name: Frontend build
+      working-directory: front
+      run: pnpm build
+
+    # Docker build test
+    - name: Test backend Docker build
+      run: docker build -t unghost-agent-backend .
+
+    - name: Test frontend Docker build
+      working-directory: front
+      run: docker build -t unghost-agent-frontend . 

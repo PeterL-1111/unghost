@@ -7,7 +7,7 @@ export interface RagConfig {
   provider: string;
 }
 
-export interface DeerFlowConfig {
+export interface UnghostAgentConfig {
   rag: RagConfig;
   models: ModelConfig;
 }

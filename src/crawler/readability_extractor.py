@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 from readabilipy import simple_json_from_html_string

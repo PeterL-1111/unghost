@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { PythonOutlined } from "@ant-design/icons";
@@ -11,12 +11,6 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-import { FavIcon } from "~/components/deer-flow/fav-icon";
-import Image from "~/components/deer-flow/image";
-import { LoadingAnimation } from "~/components/deer-flow/loading-animation";
-import { Markdown } from "~/components/deer-flow/markdown";
-import { RainbowText } from "~/components/deer-flow/rainbow-text";
-import { Tooltip } from "~/components/deer-flow/tooltip";
 import {
   Accordion,
   AccordionContent,
@@ -24,6 +18,12 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import { Skeleton } from "~/components/ui/skeleton";
+import { FavIcon } from "~/components/unghost-agent/fav-icon";
+import Image from "~/components/unghost-agent/image";
+import { LoadingAnimation } from "~/components/unghost-agent/loading-animation";
+import { Markdown } from "~/components/unghost-agent/markdown";
+import { RainbowText } from "~/components/unghost-agent/rainbow-text";
+import { Tooltip } from "~/components/unghost-agent/tooltip";
 import { findMCPTool } from "~/core/mcp";
 import type { ToolCallRuntime } from "~/core/messages";
 import { useMessage, useStore } from "~/core/store";

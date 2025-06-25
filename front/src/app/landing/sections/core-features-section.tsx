@@ -1,7 +1,7 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
-import { Bird, Microscope, Podcast, Usb, User } from "lucide-react";
+import { MessageSquare, Users, Brain, Zap, Target } from "lucide-react";
 
 import { BentoCard, BentoGrid } from "~/components/magicui/bento-grid";
 
@@ -9,11 +9,11 @@ import { SectionHeader } from "../components/section-header";
 
 const features = [
   {
-    Icon: Microscope,
-    name: "Dive Deeper and Reach Wider",
+    Icon: MessageSquare,
+    name: "AI-Personalized Messaging",
     description:
-      "Unlock deeper insights with advanced tools. Our powerful search + crawling and Python tools gathers comprehensive data, delivering in-depth reports to enhance your study.",
-    href: "https://github.com/bytedance/deer-flow/blob/main/src/tools",
+      "Transform cold prospects into warm conversations with deeply personalized messages that demonstrate genuine research and understanding of each recipient.",
+    href: "https://github.com/PeterL-1111/deer-flow-fork/blob/main/src/prompts/strategizer.md",
     cta: "Learn more",
     background: (
       <img alt="background" className="absolute -top-20 -right-20 opacity-60" />
@@ -21,11 +21,11 @@ const features = [
     className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
   },
   {
-    Icon: User,
-    name: "Human-in-the-loop",
+    Icon: Zap,
+    name: "Multi-Style Tone Generation",
     description:
-      "Refine your research plan, or adjust focus areas all through simple natural language.",
-    href: "https://github.com/bytedance/deer-flow/blob/main/src/graph/nodes.py",
+      "Choose from Aggressive, Conservative, Go Nuts, or Friendly writing styles to match your brand voice and recipient preferences perfectly.",
+    href: "https://github.com/PeterL-1111/deer-flow-fork/blob/main/src/config/report_style.py",
     cta: "Learn more",
     background: (
       <img alt="background" className="absolute -top-20 -right-20 opacity-60" />
@@ -33,11 +33,11 @@ const features = [
     className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
   },
   {
-    Icon: Bird,
-    name: "Lang Stack",
+    Icon: Brain,
+    name: "Deep Persona Research",
     description:
-      "Build with confidence using the LangChain and LangGraph frameworks.",
-    href: "https://www.langchain.com/",
+      "Uncover professional insights, communication styles, recent activities, and pain points to craft messages that truly resonate.",
+    href: "https://github.com/PeterL-1111/deer-flow-fork/blob/main/src/prompts/researcher.md",
     cta: "Learn more",
     background: (
       <img alt="background" className="absolute -top-20 -right-20 opacity-60" />
@@ -45,11 +45,11 @@ const features = [
     className: "lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:row-end-2",
   },
   {
-    Icon: Usb,
-    name: "MCP Integrations",
+    Icon: Target,
+    name: "Strategic Outreach Planning",
     description:
-      "Supercharge your research workflow and expand your toolkit with seamless MCP integrations.",
-    href: "https://github.com/bytedance/deer-flow/blob/main/src/graph/nodes.py",
+      "AI-powered analysis identifies optimal timing, communication channels, and value propositions for maximum response rates.",
+    href: "https://github.com/PeterL-1111/deer-flow-fork/blob/main/src/graph/nodes.py",
     cta: "Learn more",
     background: (
       <img alt="background" className="absolute -top-20 -right-20 opacity-60" />
@@ -57,11 +57,11 @@ const features = [
     className: "lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-3",
   },
   {
-    Icon: Podcast,
-    name: "Podcast Generation",
+    Icon: Users,
+    name: "Relationship Intelligence",
     description:
-      "Instantly generate podcasts from reports. Perfect for on-the-go learning or sharing findings effortlessly.  ",
-    href: "https://github.com/bytedance/deer-flow/blob/main/src/podcast",
+      "Discover mutual connections, shared experiences, and common interests to build authentic rapport from the first message.",
+    href: "https://github.com/PeterL-1111/deer-flow-fork/blob/main/src/mcp_tools",
     cta: "Learn more",
     background: (
       <img alt="background" className="absolute -top-20 -right-20 opacity-60" />
@@ -76,7 +76,7 @@ export function CoreFeatureSection() {
       <SectionHeader
         anchor="core-features"
         title="Core Features"
-        description="Find out what makes DeerFlow effective."
+        description="Discover what makes Unghost Agent the ultimate cold outreach companion."
       />
       <BentoGrid className="w-3/4 lg:grid-cols-2 lg:grid-rows-3">
         {features.map((feature) => (

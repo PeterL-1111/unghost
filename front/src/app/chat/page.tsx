@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 "use client";
@@ -10,16 +10,16 @@ import { Suspense } from "react";
 
 import { Button } from "~/components/ui/button";
 
-import { Logo } from "../../components/deer-flow/logo";
-import { ThemeToggle } from "../../components/deer-flow/theme-toggle";
-import { Tooltip } from "../../components/deer-flow/tooltip";
+import { Logo } from "../../components/unghost-agent/logo";
+import { ThemeToggle } from "../../components/unghost-agent/theme-toggle";
+import { Tooltip } from "../../components/unghost-agent/tooltip";
 import { SettingsDialog } from "../settings/dialogs/settings-dialog";
 
 const Main = dynamic(() => import("./main"), {
   ssr: false,
   loading: () => (
     <div className="flex h-full w-full items-center justify-center">
-      Loading DeerFlow...
+      Loading Unghost Agent...
     </div>
   ),
 });
@@ -30,10 +30,10 @@ export default function HomePage() {
       <header className="fixed top-0 left-0 flex h-12 w-full items-center justify-between px-4">
         <Logo />
         <div className="flex items-center">
-          <Tooltip title="Star DeerFlow on GitHub">
+          <Tooltip title="Star Unghost Agent on GitHub">
             <Button variant="ghost" size="icon" asChild>
               <Link
-                href="https://github.com/bytedance/deer-flow"
+                href="https://github.com/PeterL-1111/deer-flow-fork"
                 target="_blank"
               >
                 <GithubOutlined />

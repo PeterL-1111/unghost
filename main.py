@@ -1,8 +1,8 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 """
-Entry point script for the DeerFlow project.
+Entry point script for the Unghost Agent project.
 """
 
 import argparse

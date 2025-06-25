@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import "~/styles/globals.css";
@@ -7,17 +7,21 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import Script from "next/script";
 
-import { ThemeProviderWrapper } from "~/components/deer-flow/theme-provider-wrapper";
+import { ThemeProviderWrapper } from "~/components/unghost-agent/theme-provider-wrapper";
 import { loadConfig } from "~/core/api/config";
 import { env } from "~/env";
 
-import { Toaster } from "../components/deer-flow/toaster";
+import { Toaster } from "../components/unghost-agent/toaster";
 
 export const metadata: Metadata = {
-  title: "🦌 DeerFlow",
+  title: "👻 Unghost Agent",
   description:
-    "Deep Exploration and Efficient Research, an AI tool that combines language models with specialized tools for research tasks.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+    "AI-powered personalized outreach assistant that combines language models with specialized tools for lead generation and personalized messaging.",
+  icons: [
+    { rel: "icon", url: "/images/unghost-agent-favicon.svg", type: "image/svg+xml" },
+    { rel: "icon", url: "/images/unghost-agent-icon.svg", sizes: "32x32", type: "image/svg+xml" },
+    { rel: "apple-touch-icon", url: "/images/unghost-agent-icon.svg", sizes: "180x180" }
+  ],
 };
 
 const geist = Geist({
@@ -32,7 +36,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <head>
-        <script>{`window.__deerflowConfig = ${JSON.stringify(conf)}`}</script>
+        <script>{`window.__unghostAgentConfig = ${JSON.stringify(conf)}`}</script>
         {/* Define isSpace function globally to fix markdown-it issues with Next.js + Turbopack
           https://github.com/markdown-it/markdown-it/issues/1082#issuecomment-2749656365 */}
         <Script id="markdown-it-fix" strategy="beforeInteractive">

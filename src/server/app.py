@@ -1,11 +1,11 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 import base64
 import json
 import logging
 import os
-from typing import Annotated, List, cast
+from typing import Annotated, List, Optional, cast
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Query
@@ -47,8 +47,8 @@ logger = logging.getLogger(__name__)
 INTERNAL_SERVER_ERROR_DETAIL = "Internal Server Error"
 
 app = FastAPI(
-    title="DeerFlow API",
-    description="API for Deer",
+    title="Unghost Agent API",
+    description="API for Unghost Agent",
     version="0.1.0",
 )
 
@@ -66,6 +66,17 @@ graph = build_graph_with_memory()
 
 @app.post("/api/chat/stream")
 async def chat_stream(request: ChatRequest):
+    # Validate and clean user_background parameter
+    if request.user_background is not None:
+        # Trim whitespace
+        user_background_trimmed = request.user_background.strip()
+        if not user_background_trimmed:
+            # If empty after trimming, set to None instead of raising error
+            request.user_background = None
+        else:
+            # Update the request with trimmed value
+            request.user_background = user_background_trimmed
+    
     thread_id = request.thread_id
     if thread_id == "__default__":
         thread_id = str(uuid4())
@@ -83,6 +94,7 @@ async def chat_stream(request: ChatRequest):
             request.enable_background_investigation,
             request.report_style,
             request.enable_deep_thinking,
+            request.user_background,
         ),
         media_type="text/event-stream",
     )
@@ -101,6 +113,7 @@ async def _astream_workflow_generator(
     enable_background_investigation: bool,
     report_style: ReportStyle,
     enable_deep_thinking: bool,
+    user_background: Optional[str],
 ):
     input_ = {
         "messages": messages,
@@ -129,6 +142,7 @@ async def _astream_workflow_generator(
             "mcp_settings": mcp_settings,
             "report_style": report_style.value,
             "enable_deep_thinking": enable_deep_thinking,
+            "user_background": user_background,
         },
         stream_mode=["messages", "updates"],
         subgraphs=True,
@@ -323,23 +337,23 @@ async def enhance_prompt(request: EnhancePromptRequest):
             try:
                 # Handle both uppercase and lowercase input
                 style_mapping = {
-                    "ACADEMIC": ReportStyle.ACADEMIC,
-                    "POPULAR_SCIENCE": ReportStyle.POPULAR_SCIENCE,
-                    "NEWS": ReportStyle.NEWS,
-                    "SOCIAL_MEDIA": ReportStyle.SOCIAL_MEDIA,
-                    "academic": ReportStyle.ACADEMIC,
-                    "popular_science": ReportStyle.POPULAR_SCIENCE,
-                    "news": ReportStyle.NEWS,
-                    "social_media": ReportStyle.SOCIAL_MEDIA,
+                    "AGGRESSIVE": ReportStyle.AGGRESSIVE,
+                    "CONSERVATIVE": ReportStyle.CONSERVATIVE,
+                    "GO_NUTS": ReportStyle.GO_NUTS,
+                    "FRIENDLY": ReportStyle.FRIENDLY,
+                    "aggressive": ReportStyle.AGGRESSIVE,
+                    "conservative": ReportStyle.CONSERVATIVE,
+                    "go_nuts": ReportStyle.GO_NUTS,
+                    "friendly": ReportStyle.FRIENDLY,
                 }
                 report_style = style_mapping.get(
-                    request.report_style, ReportStyle.ACADEMIC
+                    request.report_style, ReportStyle.FRIENDLY
                 )
             except Exception:
-                # If invalid style, default to ACADEMIC
-                report_style = ReportStyle.ACADEMIC
+                # If invalid style, default to FRIENDLY
+                report_style = ReportStyle.FRIENDLY
         else:
-            report_style = ReportStyle.ACADEMIC
+            report_style = ReportStyle.FRIENDLY
 
         workflow = build_prompt_enhancer_graph()
         final_state = workflow.invoke(

@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 import base64
@@ -390,6 +390,105 @@ class TestChatStreamEndpoint:
 
         assert response.status_code == 200
         assert response.headers["content-type"] == "text/event-stream; charset=utf-8"
+
+    @patch("src.server.app.graph")
+    def test_chat_stream_with_valid_user_background(self, mock_graph, client):
+        """Test chat stream endpoint accepts valid user_background."""
+        async def mock_astream(*args, **kwargs):
+            # Verify user_background is passed to config
+            config = kwargs.get("config", {})
+            assert config.get("user_background") == "I am a software engineer"
+            yield ("test", None, (MagicMock(id="test", content="test", additional_kwargs={}, response_metadata={}), {}))
+
+        mock_graph.astream = mock_astream
+        
+        request_data = {
+            "messages": [{"role": "user", "content": "Hello"}],
+            "user_background": "I am a software engineer"
+        }
+        
+        response = client.post("/api/chat/stream", json=request_data)
+        assert response.status_code == 200
+
+    @patch("src.server.app.graph")
+    def test_chat_stream_with_none_user_background(self, mock_graph, client):
+        """Test chat stream endpoint accepts None user_background."""
+        async def mock_astream(*args, **kwargs):
+            # Verify user_background is None in config
+            config = kwargs.get("config", {})
+            assert config.get("user_background") is None
+            yield ("test", None, (MagicMock(id="test", content="test", additional_kwargs={}, response_metadata={}), {}))
+
+        mock_graph.astream = mock_astream
+        
+        request_data = {
+            "messages": [{"role": "user", "content": "Hello"}],
+            "user_background": None
+        }
+        
+        response = client.post("/api/chat/stream", json=request_data)
+        assert response.status_code == 200
+
+    def test_chat_stream_user_background_empty_string_error(self, client):
+        """Test chat stream endpoint rejects empty user_background."""
+        request_data = {
+            "messages": [{"role": "user", "content": "Hello"}],
+            "user_background": ""
+        }
+        
+        response = client.post("/api/chat/stream", json=request_data)
+        assert response.status_code == 400
+        assert "user_background cannot be empty or contain only whitespace" in response.json()["detail"]
+
+    def test_chat_stream_user_background_whitespace_only_error(self, client):
+        """Test chat stream endpoint rejects whitespace-only user_background."""
+        request_data = {
+            "messages": [{"role": "user", "content": "Hello"}],
+            "user_background": "   \n\t   "
+        }
+        
+        response = client.post("/api/chat/stream", json=request_data)
+        assert response.status_code == 400
+        assert "user_background cannot be empty or contain only whitespace" in response.json()["detail"]
+
+    @patch("src.server.app.graph")
+    def test_chat_stream_user_background_trimmed(self, mock_graph, client):
+        """Test chat stream endpoint trims whitespace from user_background."""
+        async def mock_astream(*args, **kwargs):
+            # Verify user_background is trimmed in config
+            config = kwargs.get("config", {})
+            assert config.get("user_background") == "I am a software engineer"
+            yield ("test", None, (MagicMock(id="test", content="test", additional_kwargs={}, response_metadata={}), {}))
+
+        mock_graph.astream = mock_astream
+        
+        request_data = {
+            "messages": [{"role": "user", "content": "Hello"}],
+            "user_background": "  I am a software engineer  "
+        }
+        
+        response = client.post("/api/chat/stream", json=request_data)
+        assert response.status_code == 200
+
+    def test_chat_stream_user_background_too_long_error(self, client):
+        """Test chat stream endpoint rejects user_background over 2000 characters."""
+        request_data = {
+            "messages": [{"role": "user", "content": "Hello"}],
+            "user_background": "A" * 2001  # One character over the limit
+        }
+        
+        response = client.post("/api/chat/stream", json=request_data)
+        assert response.status_code == 422  # Pydantic validation error
+
+    def test_chat_stream_user_background_invalid_type_error(self, client):
+        """Test chat stream endpoint rejects non-string user_background."""
+        request_data = {
+            "messages": [{"role": "user", "content": "Hello"}],
+            "user_background": 123
+        }
+        
+        response = client.post("/api/chat/stream", json=request_data)
+        assert response.status_code == 422  # Pydantic validation error
 
 
 class TestAstreamWorkflowGenerator:

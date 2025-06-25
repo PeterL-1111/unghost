@@ -1,12 +1,12 @@
 {
-  "name": "deer-ai-research",
+  "name": "unghost-agent",
   "version": "1.0.0",
-  "description": "AI Research Assistant with Multi-Agent System",
+  "description": "AI-powered personalized cold outreach message generation",
   "scripts": {
     "install-python-deps": "python -m pip install --upgrade pip && python -m pip install -r requirements.txt",
     "dev": "python main.py --interactive",
     "start": "python server.py",
-    "web": "cd web && npm run dev",
+    "web": "cd front && npm run dev",
     "setup": "npm run install-python-deps"
   },
   "dependencies": {

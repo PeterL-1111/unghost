@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { MagicWandIcon } from "@radix-ui/react-icons";
@@ -6,14 +6,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, Lightbulb, X } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import { Detective } from "~/components/deer-flow/icons/detective";
-import MessageInput, {
-  type MessageInputRef,
-} from "~/components/deer-flow/message-input";
-import { ReportStyleDialog } from "~/components/deer-flow/report-style-dialog";
-import { Tooltip } from "~/components/deer-flow/tooltip";
 import { BorderBeam } from "~/components/magicui/border-beam";
 import { Button } from "~/components/ui/button";
+import { Detective } from "~/components/unghost-agent/icons/detective";
+import MessageInput, {
+  type MessageInputRef,
+} from "~/components/unghost-agent/message-input";
+import { ReportStyleDialog } from "~/components/unghost-agent/report-style-dialog";
+import { Tooltip } from "~/components/unghost-agent/tooltip";
 import { enhancePrompt } from "~/core/api";
 import { getConfig } from "~/core/api/config";
 import type { Option, Resource } from "~/core/messages";
@@ -218,7 +218,7 @@ export function InputBox({
                     Deep Thinking Mode: {enableDeepThinking ? "On" : "Off"}
                   </h3>
                   <p>
-                    When enabled, DeerFlow will use reasoning model (
+                    When enabled, Unghost Agent will use reasoning model (
                     {reasoningModel}) to generate more thoughtful plans.
                   </p>
                 </div>
@@ -247,7 +247,7 @@ export function InputBox({
                   Investigation Mode: {backgroundInvestigation ? "On" : "Off"}
                 </h3>
                 <p>
-                  When enabled, DeerFlow will perform a quick search before
+                  When enabled, Unghost Agent will perform a quick search before
                   planning. This is useful for researches related to ongoing
                   events and news.
                 </p>

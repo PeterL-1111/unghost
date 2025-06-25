@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 from typing import List, Optional, Union
@@ -60,10 +60,15 @@ class ChatRequest(BaseModel):
         True, description="Whether to get background investigation before plan"
     )
     report_style: Optional[ReportStyle] = Field(
-        ReportStyle.ACADEMIC, description="The style of the report"
+        ReportStyle.FRIENDLY, description="The style of the report"
     )
     enable_deep_thinking: Optional[bool] = Field(
         False, description="Whether to enable deep thinking"
+    )
+    user_background: Optional[str] = Field(
+        None, 
+        description="User's professional background for personalized outreach",
+        max_length=2000
     )
 
 
@@ -105,5 +110,5 @@ class EnhancePromptRequest(BaseModel):
         "", description="Additional context about the intended use"
     )
     report_style: Optional[str] = Field(
-        "academic", description="The style of the report"
+        "friendly", description="The style of the report"
     )

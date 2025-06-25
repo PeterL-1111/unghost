@@ -1,11 +1,11 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { create } from "zustand";
 
 import type { MCPServerMetadata, SimpleMCPServerMetadata } from "../mcp";
 
-const SETTINGS_KEY = "deerflow.settings";
+const SETTINGS_KEY = "unghost-agent.settings";
 
 const DEFAULT_SETTINGS: SettingsState = {
   general: {
@@ -15,7 +15,8 @@ const DEFAULT_SETTINGS: SettingsState = {
     maxPlanIterations: 1,
     maxStepNum: 3,
     maxSearchResults: 3,
-    reportStyle: "academic",
+    reportStyle: "friendly",
+    userBackground: "",
   },
   mcp: {
     servers: [],
@@ -30,7 +31,8 @@ export type SettingsState = {
     maxPlanIterations: number;
     maxStepNum: number;
     maxSearchResults: number;
-    reportStyle: "academic" | "popular_science" | "news" | "social_media";
+    reportStyle: "aggressive" | "conservative" | "go_nuts" | "friendly";
+    userBackground: string;
   };
   mcp: {
     servers: MCPServerMetadata[];
@@ -55,18 +57,21 @@ export const loadSettings = () => {
   }
   const json = localStorage.getItem(SETTINGS_KEY);
   if (json) {
-    const settings = JSON.parse(json);
-    for (const key in DEFAULT_SETTINGS.general) {
-      if (!(key in settings.general)) {
-        settings.general[key as keyof SettingsState["general"]] =
-          DEFAULT_SETTINGS.general[key as keyof SettingsState["general"]];
-      }
-    }
-
     try {
+      const settings = JSON.parse(json);
+
+      // Ensure settings.general exists and has all default keys
+      settings.general = {
+        ...DEFAULT_SETTINGS.general,
+        ...(settings.general ?? {}),
+      };
+
+      // Ensure settings.mcp exists
+      settings.mcp ??= DEFAULT_SETTINGS.mcp;
+      
       useSettingsStore.setState(settings);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to parse settings from localStorage", error);
     }
   }
 };
@@ -130,7 +135,7 @@ export const getChatStreamSettings = () => {
 };
 
 export function setReportStyle(
-  value: "academic" | "popular_science" | "news" | "social_media",
+  value: "aggressive" | "conservative" | "go_nuts" | "friendly",
 ) {
   useSettingsStore.setState((state) => ({
     general: {
@@ -160,4 +165,15 @@ export function setEnableBackgroundInvestigation(value: boolean) {
   }));
   saveSettings();
 }
+
+export function setUserBackground(value: string) {
+  useSettingsStore.setState((state) => ({
+    general: {
+      ...state.general,
+      userBackground: value,
+    },
+  }));
+  saveSettings();
+}
+
 loadSettings();

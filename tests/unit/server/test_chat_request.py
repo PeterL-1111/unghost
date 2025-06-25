@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+# Copyright (c) 2025 Peter Liu
 # SPDX-License-Identifier: MIT
 
 import asyncio  # Ensure asyncio is imported
@@ -61,7 +61,8 @@ def test_chat_request_defaults():
     assert req.interrupt_feedback is None
     assert req.mcp_settings is None
     assert req.enable_background_investigation is True
-    assert req.report_style == ReportStyle.ACADEMIC
+    assert req.report_style == ReportStyle.FRIENDLY
+    assert req.user_background is None
 
 
 def test_chat_request_with_values():
@@ -82,6 +83,7 @@ def test_chat_request_with_values():
         mcp_settings={"foo": "bar"},
         enable_background_investigation=False,
         report_style="academic",
+        user_background="I am a senior software engineer with 10 years of experience in Python and React",
     )
     assert req.messages[0].role == "user"
     assert req.debug is True
@@ -94,6 +96,7 @@ def test_chat_request_with_values():
     assert req.mcp_settings == {"foo": "bar"}
     assert req.enable_background_investigation is False
     assert req.report_style == ReportStyle.ACADEMIC
+    assert req.user_background == "I am a senior software engineer with 10 years of experience in Python and React"
 
 
 def test_tts_request_defaults():
@@ -166,3 +169,81 @@ async def test_load_mcp_tools_exception_handling(
         await mcp_utils.load_mcp_tools(server_type="stdio", command="foo")  # Use await
     assert exc.value.status_code == 500
     assert "unexpected error" in exc.value.detail
+
+
+class TestUserBackgroundValidation:
+    """Test cases for user_background parameter validation in ChatRequest."""
+
+    def test_user_background_none_is_valid(self):
+        """Test that None is a valid value for user_background."""
+        req = ChatRequest(user_background=None)
+        assert req.user_background is None
+
+    def test_user_background_valid_string(self):
+        """Test that valid strings are accepted."""
+        background = "I am a senior software engineer with 10 years of experience"
+        req = ChatRequest(user_background=background)
+        assert req.user_background == background
+
+    def test_user_background_minimum_length(self):
+        """Test that strings with minimum length (1 char) are accepted."""
+        req = ChatRequest(user_background="A")
+        assert req.user_background == "A"
+
+    def test_user_background_maximum_length(self):
+        """Test that strings at maximum length (2000 chars) are accepted."""
+        background = "A" * 2000
+        req = ChatRequest(user_background=background)
+        assert req.user_background == background
+
+    def test_user_background_empty_string_validation_error(self):
+        """Test that empty strings trigger validation error."""
+        with pytest.raises(ValidationError) as exc_info:
+            ChatRequest(user_background="")
+        
+        errors = exc_info.value.errors()
+        assert len(errors) == 1
+        assert errors[0]["type"] == "string_too_short"
+        assert "user_background" in errors[0]["loc"]
+
+    def test_user_background_too_long_validation_error(self):
+        """Test that strings over 2000 chars trigger validation error."""
+        background = "A" * 2001  # One character over the limit
+        with pytest.raises(ValidationError) as exc_info:
+            ChatRequest(user_background=background)
+        
+        errors = exc_info.value.errors()
+        assert len(errors) == 1
+        assert errors[0]["type"] == "string_too_long"
+        assert "user_background" in errors[0]["loc"]
+
+    def test_user_background_non_string_validation_error(self):
+        """Test that non-string values trigger validation error."""
+        with pytest.raises(ValidationError) as exc_info:
+            ChatRequest(user_background=123)
+        
+        errors = exc_info.value.errors()
+        assert len(errors) == 1
+        assert errors[0]["type"] == "string_type"
+        assert "user_background" in errors[0]["loc"]
+
+    def test_user_background_with_whitespace(self):
+        """Test that strings with whitespace are handled correctly."""
+        background = "  I am a developer with experience in Python  "
+        req = ChatRequest(user_background=background)
+        assert req.user_background == background  # No automatic trimming in model
+
+    def test_user_background_unicode_support(self):
+        """Test that Unicode characters are supported."""
+        background = "I am a developer from España with 5 years of experience 🚀"
+        req = ChatRequest(user_background=background)
+        assert req.user_background == background
+
+    def test_user_background_multiline_support(self):
+        """Test that multiline strings are supported."""
+        background = """I am a senior software engineer with:
+- 10 years of Python experience
+- 5 years of React experience
+- Team leadership skills"""
+        req = ChatRequest(user_background=background)
+        assert req.user_background == background

@@ -1,14 +1,16 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { useCallback, useRef } from "react";
 
-import { LoadingAnimation } from "~/components/deer-flow/loading-animation";
-import { Markdown } from "~/components/deer-flow/markdown";
 import ReportEditor from "~/components/editor";
+import { LoadingAnimation } from "~/components/unghost-agent/loading-animation";
+import { Markdown } from "~/components/unghost-agent/markdown";
 import { useReplay } from "~/core/replay";
 import { useMessage, useStore } from "~/core/store";
 import { cn } from "~/lib/utils";
+
+import { StructuredOutreachReport } from "./structured-outreach-report";
 
 export function ResearchReportBlock({
   className,
@@ -38,6 +40,13 @@ export function ResearchReportBlock({
   );
   const contentRef = useRef<HTMLDivElement>(null);
   const isCompleted = message?.isStreaming === false && message?.content !== "";
+  
+  // Check if this is an outreach report based on content structure
+  const isOutreachReport = message?.content && (
+    message.content.includes('Outreach Message') || 
+    message.content.includes('Recipient Profile') ||
+    message.content.includes('Outreach Strategy')
+  );
   // TODO: scroll to top when completed, but it's not working
   // useEffect(() => {
   //   if (isCompleted && contentRef.current) {
@@ -59,6 +68,11 @@ export function ResearchReportBlock({
           content={message?.content}
           onMarkdownChange={handleMarkdownChange}
         />
+      ) : isOutreachReport && message?.content ? (
+        <>
+          <StructuredOutreachReport content={message.content} />
+          {message?.isStreaming && <LoadingAnimation className="my-12" />}
+        </>
       ) : (
         <>
           <Markdown animated checkLinkCredibility>

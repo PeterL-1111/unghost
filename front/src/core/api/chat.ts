@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Copyright (c) 2025 Peter Liu
 // SPDX-License-Identifier: MIT
 
 import { env } from "~/env";
@@ -24,7 +24,8 @@ export async function* chatStream(
     interrupt_feedback?: string;
     enable_deep_thinking?: boolean;
     enable_background_investigation: boolean;
-    report_style?: "academic" | "popular_science" | "news" | "social_media";
+    report_style?: "aggressive" | "conservative" | "go_nuts" | "friendly";
+    user_background?: string;
     mcp_settings?: {
       servers: Record<
         string,

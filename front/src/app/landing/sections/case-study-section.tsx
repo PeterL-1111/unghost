@@ -3,7 +3,7 @@
 
 import { MessageSquare, TrendingUp, Users, Heart, Briefcase, Handshake, Target, UserCheck } from "lucide-react";
 
-import { BentoCard } from "~/components/magicui/bento-grid";
+import { cn } from "~/lib/utils";
 
 import { SectionHeader } from "../components/section-header";
 
@@ -66,6 +66,40 @@ const caseStudies = [
   },
 ];
 
+// Non-clickable case study card component
+const CaseStudyCard = ({
+  Icon,
+  title,
+  description,
+  className,
+}: {
+  Icon: React.ElementType;
+  title: string;
+  description: string;
+  className?: string;
+}) => (
+  <div
+    className={cn(
+      "non-clickable group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl cursor-default",
+      // Dark theme styles
+      "bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 border border-slate-700/50",
+      "shadow-xl shadow-indigo-500/10 backdrop-blur-sm",
+      // Hover effects
+      "transition-all duration-300 ease-in-out hover:shadow-indigo-500/20 hover:border-indigo-500/30 hover:scale-105",
+      "w-full h-full",
+      className,
+    )}
+  >
+    <div className="z-10 flex transform-gpu flex-col gap-1 p-6">
+      <Icon className="h-12 w-12 origin-left transform-gpu text-indigo-400 transition-all duration-300 ease-in-out group-hover:text-indigo-300" />
+      <h3 className="text-xl font-semibold text-slate-100 group-hover:text-white transition-colors duration-300">
+        {title}
+      </h3>
+      <p className="max-w-lg text-slate-300 group-hover:text-slate-200 transition-colors duration-300">{description}</p>
+    </div>
+  </div>
+);
+
 export function CaseStudySection() {
   return (
     <section className="relative container hidden flex-col items-center justify-center md:flex">
@@ -77,15 +111,10 @@ export function CaseStudySection() {
       <div className="grid w-3/4 grid-cols-1 gap-2 sm:w-full sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {caseStudies.map((caseStudy) => (
           <div key={caseStudy.title} className="w-full p-2">
-            <BentoCard
-              {...{
-                Icon: caseStudy.icon,
-                name: caseStudy.title,
-                description: caseStudy.description,
-                href: `/chat?replay=${caseStudy.id}`,
-                cta: "View outreach strategy",
-                className: "w-full h-full",
-              }}
+            <CaseStudyCard
+              Icon={caseStudy.icon}
+              title={caseStudy.title}
+              description={caseStudy.description}
             />
           </div>
         ))}

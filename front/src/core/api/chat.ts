@@ -22,8 +22,6 @@ export async function* chatStream(
     max_step_num: number;
     max_search_results?: number;
     interrupt_feedback?: string;
-    enable_deep_thinking?: boolean;
-    enable_background_investigation: boolean;
     report_style?: "aggressive" | "conservative" | "go_nuts" | "friendly";
     user_background?: string;
     mcp_settings?: {

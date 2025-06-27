@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import json
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Union
 
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
@@ -105,7 +105,7 @@ class TavilySearchResultsWithImages(TavilySearchResults):  # type: ignore[overri
         self,
         query: str,
         run_manager: Optional[CallbackManagerForToolRun] = None,
-    ) -> Tuple[Union[List[Dict[str, str]], str], Dict]:
+    ) -> Union[List[Dict[str, str]], str]:
         """Use the tool."""
         # TODO: remove try/except, should be handled by BaseTool
         try:
@@ -121,16 +121,16 @@ class TavilySearchResultsWithImages(TavilySearchResults):  # type: ignore[overri
                 self.include_image_descriptions,
             )
         except Exception as e:
-            return repr(e), {}
+            return repr(e)
         cleaned_results = self.api_wrapper.clean_results_with_images(raw_results)
         print("sync", json.dumps(cleaned_results, indent=2, ensure_ascii=False))
-        return cleaned_results, raw_results
+        return cleaned_results
 
     async def _arun(
         self,
         query: str,
         run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
-    ) -> Tuple[Union[List[Dict[str, str]], str], Dict]:
+    ) -> Union[List[Dict[str, str]], str]:
         """Use the tool asynchronously."""
         try:
             raw_results = await self.api_wrapper.raw_results_async(
@@ -145,7 +145,7 @@ class TavilySearchResultsWithImages(TavilySearchResults):  # type: ignore[overri
                 self.include_image_descriptions,
             )
         except Exception as e:
-            return repr(e), {}
+            return repr(e)
         cleaned_results = self.api_wrapper.clean_results_with_images(raw_results)
         print("async", json.dumps(cleaned_results, indent=2, ensure_ascii=False))
-        return cleaned_results, raw_results
+        return cleaned_results

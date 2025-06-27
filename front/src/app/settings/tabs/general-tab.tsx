@@ -30,23 +30,12 @@ const generalFormSchema = z.object({
   maxPlanIterations: z.number().min(1, "Max plan iterations must be at least 1."),
   maxStepNum: z.number().min(1, "Max step number must be at least 1."),
   maxSearchResults: z.number().min(1, "Max search results must be at least 1."),
-  enableBackgroundInvestigation: z.boolean(),
-  enableDeepThinking: z.boolean(),
   reportStyle: z.enum(["aggressive", "conservative", "go_nuts", "friendly"]),
   userBackground: z.string(),
 });
 
 // Explicit type definition to avoid inference issues
-interface GeneralFormData {
-  autoAcceptedPlan: boolean;
-  maxPlanIterations: number;
-  maxStepNum: number;
-  maxSearchResults: number;
-  enableBackgroundInvestigation: boolean;
-  enableDeepThinking: boolean;
-  reportStyle: "aggressive" | "conservative" | "go_nuts" | "friendly";
-  userBackground: string;
-}
+type GeneralFormData = z.infer<typeof generalFormSchema>;
 
 export const GeneralTab: Tab = ({
   settings,
@@ -57,11 +46,11 @@ export const GeneralTab: Tab = ({
 }) => {
   const generalSettings = useMemo(() => settings.general, [settings]);
   
-  const form = useForm<GeneralFormData>({
+  const form = useForm({
     resolver: zodResolver(generalFormSchema),
     defaultValues: generalSettings,
-    mode: "all",
-    reValidateMode: "onBlur",
+    mode: "all" as const,
+    reValidateMode: "onBlur" as const,
   });
 
   const currentSettings = form.watch();
@@ -73,8 +62,6 @@ export const GeneralTab: Tab = ({
       // Create the update with explicit typing
       const generalUpdate: SettingsState["general"] = {
         autoAcceptedPlan: currentSettings.autoAcceptedPlan,
-        enableDeepThinking: currentSettings.enableDeepThinking,
-        enableBackgroundInvestigation: currentSettings.enableBackgroundInvestigation,
         maxPlanIterations: currentSettings.maxPlanIterations,
         maxStepNum: currentSettings.maxStepNum,
         maxSearchResults: currentSettings.maxSearchResults,

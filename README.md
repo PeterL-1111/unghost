@@ -165,7 +165,7 @@ uv run main.py "Create recruiting outreach for Lisa Wang, Senior Software Engine
 ```
 
 #### Professional Networking
-```bash
+  ```bash
 # Network expansion and relationship building
 uv run main.py "Draft networking message to Alex Thompson, founder of StartupX, to discuss AI trends in fintech"
 ```
@@ -254,7 +254,7 @@ Access the Studio UI at: https://smith.langchain.com/studio/?baseUrl=http://127.
 
 Run Unghost Agent with Docker for consistent deployment:
 
-```bash
+   ```bash
 # Build the Docker image
 docker build -t unghost-agent .
 

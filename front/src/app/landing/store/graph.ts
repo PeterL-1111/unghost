@@ -7,9 +7,9 @@ import {
   FilePen,
   MessageSquareQuote,
   Microscope,
-  SquareTerminal,
   UserCheck,
   Users,
+  Target,
   type LucideIcon,
 } from "lucide-react";
 
@@ -68,12 +68,12 @@ export const graph: Graph = {
     {
       id: "Researcher",
       data: { icon: Microscope, label: "Researcher" },
-      position: { x: -75, y: ROW_6 },
+      position: { x: -50, y: ROW_6 },
     },
     {
-      id: "Coder",
-      data: { icon: SquareTerminal, label: "Coder" },
-      position: { x: 125, y: ROW_6 },
+      id: "Strategizer",
+      data: { icon: Target, label: "Strategizer" },
+      position: { x: 100, y: ROW_6 },
     },
     {
       id: "End",
@@ -148,11 +148,11 @@ export const graph: Graph = {
       animated: true,
     },
     {
-      id: "ResearchTeam->Coder",
+      id: "ResearchTeam->Strategizer",
       source: "ResearchTeam",
-      target: "Coder",
-      sourceHandle: "bottom",
-      targetHandle: "left",
+      target: "Strategizer",
+      sourceHandle: "right",
+      targetHandle: "top",
       animated: true,
     },
     {
@@ -168,14 +168,14 @@ export const graph: Graph = {
       source: "Researcher",
       target: "ResearchTeam",
       sourceHandle: "right",
-      targetHandle: "bottom",
+      targetHandle: "left",
       animated: true,
     },
     {
-      id: "Coder->ResearchTeam",
-      source: "Coder",
+      id: "Strategizer->ResearchTeam",
+      source: "Strategizer",
       target: "ResearchTeam",
-      sourceHandle: "top",
+      sourceHandle: "left",
       targetHandle: "right",
       animated: true,
     },

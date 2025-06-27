@@ -3,25 +3,19 @@
 
 import { MagicWandIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUp, Lightbulb, X } from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { ArrowUp, X } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
 
 import { BorderBeam } from "~/components/magicui/border-beam";
 import { Button } from "~/components/ui/button";
-import { Detective } from "~/components/unghost-agent/icons/detective";
 import MessageInput, {
   type MessageInputRef,
 } from "~/components/unghost-agent/message-input";
 import { ReportStyleDialog } from "~/components/unghost-agent/report-style-dialog";
 import { Tooltip } from "~/components/unghost-agent/tooltip";
 import { enhancePrompt } from "~/core/api";
-import { getConfig } from "~/core/api/config";
 import type { Option, Resource } from "~/core/messages";
-import {
-  setEnableDeepThinking,
-  setEnableBackgroundInvestigation,
-  useSettingsStore,
-} from "~/core/store";
+import { useSettingsStore } from "~/core/store";
 import { cn } from "~/lib/utils";
 
 export function InputBox({
@@ -46,13 +40,6 @@ export function InputBox({
   onCancel?: () => void;
   onRemoveFeedback?: () => void;
 }) {
-  const enableDeepThinking = useSettingsStore(
-    (state) => state.general.enableDeepThinking,
-  );
-  const backgroundInvestigation = useSettingsStore(
-    (state) => state.general.enableBackgroundInvestigation,
-  );
-  const reasoningModel = useMemo(() => getConfig().models.reasoning?.[0], []);
   const reportStyle = useSettingsStore((state) => state.general.reportStyle);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<MessageInputRef>(null);
@@ -209,64 +196,6 @@ export function InputBox({
       </div>
       <div className="flex items-center px-4 py-2">
         <div className="flex grow gap-2">
-          {reasoningModel && (
-            <Tooltip
-              className="max-w-60"
-              title={
-                <div>
-                  <h3 className="mb-2 font-bold">
-                    Deep Thinking Mode: {enableDeepThinking ? "On" : "Off"}
-                  </h3>
-                  <p>
-                    When enabled, Unghost Agent will use reasoning model (
-                    {reasoningModel}) to generate more thoughtful plans.
-                  </p>
-                </div>
-              }
-            >
-              <Button
-                className={cn(
-                  "rounded-2xl",
-                  enableDeepThinking && "!border-brand !text-brand",
-                )}
-                variant="outline"
-                onClick={() => {
-                  setEnableDeepThinking(!enableDeepThinking);
-                }}
-              >
-                <Lightbulb /> Deep Thinking
-              </Button>
-            </Tooltip>
-          )}
-
-          <Tooltip
-            className="max-w-60"
-            title={
-              <div>
-                <h3 className="mb-2 font-bold">
-                  Investigation Mode: {backgroundInvestigation ? "On" : "Off"}
-                </h3>
-                <p>
-                  When enabled, Unghost Agent will perform a quick search before
-                  planning. This is useful for researches related to ongoing
-                  events and news.
-                </p>
-              </div>
-            }
-          >
-            <Button
-              className={cn(
-                "rounded-2xl",
-                backgroundInvestigation && "!border-brand !text-brand",
-              )}
-              variant="outline"
-              onClick={() =>
-                setEnableBackgroundInvestigation(!backgroundInvestigation)
-              }
-            >
-              <Detective /> Investigation
-            </Button>
-          </Tooltip>
           <ReportStyleDialog />
         </div>
         <div className="flex shrink-0 items-center gap-2">

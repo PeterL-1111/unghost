@@ -47,6 +47,12 @@ import {
 } from "~/core/store";
 import { parseJSON } from "~/core/utils";
 import { cn } from "~/lib/utils";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "~/components/ui/tabs";
 
 export function MessageListView({
   className,
@@ -143,6 +149,7 @@ function MessageListItem({
       message.role === "user" ||
       message.agent === "coordinator" ||
       message.agent === "planner" ||
+      message.agent === "reporter" ||
       message.agent === "podcast" ||
       startOfResearch
     ) {
@@ -157,6 +164,12 @@ function MessageListItem({
               onFeedback={onFeedback}
               onSendMessage={onSendMessage}
             />
+          </div>
+        );
+      } else if (message.agent === "reporter") {
+        content = (
+          <div className="w-full px-4">
+            <ReportCard message={message} />
           </div>
         );
       } else if (message.agent === "podcast") {
@@ -301,6 +314,153 @@ function ResearchCard({
           </Button>
         </div>
       </CardFooter>
+    </Card>
+  );
+}
+
+function ReportCard({
+  className,
+  message,
+}: {
+  className?: string;
+  message: Message;
+}) {
+  const { title, summary, profile, strategy, outreach, next_steps, sources } =
+    useMemo(() => {
+      const content = message.content || "";
+      
+      // Try to parse sections using different patterns
+      const parseSection = (sectionName: string, content: string): string => {
+        const patterns = [
+          new RegExp(`## ${sectionName}\\s*\\n([\\s\\S]*?)(?=\\n## |$)`, 'i'),
+          new RegExp(`# ${sectionName}\\s*\\n([\\s\\S]*?)(?=\\n# |$)`, 'i'),
+          new RegExp(`\\*\\*${sectionName}\\*\\*\\s*\\n([\\s\\S]*?)(?=\\n\\*\\*|$)`, 'i'),
+        ];
+        
+        for (const pattern of patterns) {
+          const match = content.match(pattern);
+          if (match?.[1]) {
+            return match[1].trim();
+          }
+        }
+        return "";
+      };
+
+      // Extract title - try different patterns
+      let title = "";
+      const titleMatch = content.match(/^#\s+(.+)$/m);
+      if (titleMatch) {
+        title = titleMatch[1].trim();
+      }
+
+      return {
+        title: title || "Outreach Report",
+        summary: parseSection("Outreach Summary", content),
+        profile: parseSection("Recipient Profile", content),
+        strategy: parseSection("Outreach Strategy", content),
+        outreach: parseSection("Outreach Message", content),
+        next_steps: parseSection("Next Steps", content),
+        sources: parseSection("Sources", content),
+      };
+    }, [message.content]);
+
+  // If we can't parse structured content, show the raw content
+  if (!summary && !profile && !strategy && !outreach) {
+    return (
+      <Card className={cn("w-full", className)}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-green-500"></div>
+            Final Report
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="max-h-96 overflow-y-auto">
+          <Markdown className="prose prose-sm max-w-none dark:prose-invert">
+            {message.content}
+          </Markdown>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className={cn("w-full", className)}>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-green-500"></div>
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="summary" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+            <TabsTrigger value="summary">Summary</TabsTrigger>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="strategy">Strategy</TabsTrigger>
+            <TabsTrigger value="outreach">Message</TabsTrigger>
+            <TabsTrigger value="next_steps">Next Steps</TabsTrigger>
+            <TabsTrigger value="sources">Sources</TabsTrigger>
+          </TabsList>
+          
+          <div className="mt-4 max-h-80 overflow-y-auto">
+            <TabsContent value="summary" className="mt-0">
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Key Findings</h4>
+                <Markdown className="prose prose-sm max-w-none dark:prose-invert">
+                  {summary || "No summary available"}
+                </Markdown>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="profile" className="mt-0">
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Target Profile</h4>
+                <Markdown className="prose prose-sm max-w-none dark:prose-invert">
+                  {profile || "No profile information available"}
+                </Markdown>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="strategy" className="mt-0">
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Recommended Approach</h4>
+                <Markdown className="prose prose-sm max-w-none dark:prose-invert">
+                  {strategy || "No strategy information available"}
+                </Markdown>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="outreach" className="mt-0">
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Crafted Message</h4>
+                <div className="rounded-md border bg-muted/50 p-4">
+                  <Markdown className="prose prose-sm max-w-none dark:prose-invert">
+                    {outreach || "No outreach message available"}
+                  </Markdown>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="next_steps" className="mt-0">
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Follow-up Actions</h4>
+                <Markdown className="prose prose-sm max-w-none dark:prose-invert">
+                  {next_steps || "No next steps available"}
+                </Markdown>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="sources" className="mt-0">
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Research Sources</h4>
+                <Markdown className="prose prose-sm max-w-none dark:prose-invert">
+                  {sources || "No sources listed"}
+                </Markdown>
+              </div>
+            </TabsContent>
+          </div>
+        </Tabs>
+      </CardContent>
     </Card>
   );
 }

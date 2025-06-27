@@ -13,7 +13,6 @@ from langgraph.types import Command, interrupt
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 from src.agents import create_agent
-from src.tools.search import LoggedTavilySearch
 from src.tools import (
     crawl_tool,
     get_web_search_tool,
@@ -29,7 +28,6 @@ from src.prompts.template import apply_prompt_template
 from src.utils.json_utils import repair_json_output
 
 from .types import State
-from ..config import SELECTED_SEARCH_ENGINE, SearchEngine
 
 logger = logging.getLogger(__name__)
 
@@ -49,33 +47,57 @@ def background_investigation_node(state: State, config: RunnableConfig):
     logger.info("background investigation node is running.")
     configurable = Configuration.from_runnable_config(config)
     query = state.get("research_topic")
-    background_investigation_results = None
-    if SELECTED_SEARCH_ENGINE == SearchEngine.TAVILY.value:
-        searched_content = LoggedTavilySearch(
-            max_results=configurable.max_search_results
-        ).invoke(query)
+    
+    # Get the web search tool
+    search_tool = get_web_search_tool(configurable.max_search_results)
+    
+    try:
+        # Invoke the search tool properly
+        searched_content = search_tool.invoke({"query": query})
+        
+        # Handle the response - it could be a list or a string depending on the tool
         if isinstance(searched_content, list):
-            background_investigation_results = [
-                f"## {elem['title']}\n\n{elem['content']}" for elem in searched_content
-            ]
+            # Handle both page and image results from our enhanced search
+            background_investigation_results = []
+            for elem in searched_content:
+                if elem.get('type') == 'page':
+                    background_investigation_results.append(
+                        f"## {elem['title']}\n\n{elem['content']}"
+                    )
+                elif elem.get('type') == 'image':
+                    background_investigation_results.append(
+                        f"![{elem['image_description']}]({elem['image_url']})"
+                    )
+                # Fallback for legacy format without 'type' field
+                elif 'title' in elem and 'content' in elem:
+                    background_investigation_results.append(
+                        f"## {elem['title']}\n\n{elem['content']}"
+                    )
+            
             return {
                 "background_investigation_results": "\n\n".join(
                     background_investigation_results
                 )
             }
+        elif isinstance(searched_content, str):
+            # Handle string responses (e.g., from other search engines)
+            return {
+                "background_investigation_results": searched_content
+            }
         else:
             logger.error(
-                f"Tavily search returned malformed response: {searched_content}"
+                f"Search tool returned unexpected response type: {type(searched_content)}, content: {searched_content}"
             )
-    else:
-        background_investigation_results = get_web_search_tool(
-            configurable.max_search_results
-        ).invoke(query)
-    return {
-        "background_investigation_results": json.dumps(
-            background_investigation_results, ensure_ascii=False
-        )
-    }
+            return {
+                "background_investigation_results": json.dumps(
+                    searched_content, ensure_ascii=False
+                )
+            }
+    except Exception as e:
+        logger.error(f"Error in background investigation: {e}")
+        return {
+            "background_investigation_results": f"Error occurred during background investigation: {str(e)}"
+        }
 
 
 def planner_node(
@@ -85,7 +107,10 @@ def planner_node(
     logger.info("Planner generating full plan")
     configurable = Configuration.from_runnable_config(config)
     plan_iterations = state["plan_iterations"] if state.get("plan_iterations", 0) else 0
-    messages = apply_prompt_template("planner", state, configurable)
+    
+    # Create state with user_background for template
+    planner_state = {**state, "user_background": state.get("user_background")}
+    messages = apply_prompt_template("planner", planner_state, configurable)
 
     if state.get("enable_background_investigation") and state.get(
         "background_investigation_results"
@@ -116,38 +141,52 @@ def planner_node(
         return Command(goto="reporter")
 
     full_response = ""
+    structured_output_used = False
+    
     if AGENT_LLM_MAP["planner"] == "basic" and not configurable.enable_deep_thinking:
         response = llm.invoke(messages)
         full_response = response.model_dump_json(indent=4, exclude_none=True)
+        structured_output_used = True
     else:
         response = llm.stream(messages)
         for chunk in response:
             full_response += chunk.content
+    
     logger.debug(f"Current state messages: {state['messages']}")
     logger.info(f"Planner response: {full_response}")
 
     try:
-        curr_plan = json.loads(repair_json_output(full_response))
+        # For structured output, the response is already valid JSON
+        if structured_output_used:
+            curr_plan = json.loads(full_response)
+        else:
+            curr_plan = json.loads(repair_json_output(full_response))
     except json.JSONDecodeError:
         logger.warning("Planner response is not a valid JSON")
         if plan_iterations > 0:
             return Command(goto="reporter")
         else:
             return Command(goto="__end__")
+    
     if curr_plan.get("has_enough_context"):
         logger.info("Planner response has enough context.")
         new_plan = Plan.model_validate(curr_plan)
+        # Send the cleaned JSON to frontend, not the raw response
+        clean_response = json.dumps(curr_plan, indent=2, ensure_ascii=False)
         return Command(
             update={
-                "messages": [AIMessage(content=full_response, name="planner")],
+                "messages": [AIMessage(content=clean_response, name="planner")],
                 "current_plan": new_plan,
             },
             goto="reporter",
         )
+    
+    # Send the cleaned JSON to frontend for human feedback
+    clean_response = json.dumps(curr_plan, indent=2, ensure_ascii=False)
     return Command(
         update={
-            "messages": [AIMessage(content=full_response, name="planner")],
-            "current_plan": full_response,
+            "messages": [AIMessage(content=clean_response, name="planner")],
+            "current_plan": curr_plan,
         },
         goto="human_feedback",
     )
@@ -181,15 +220,20 @@ def human_feedback_node(
     plan_iterations = state["plan_iterations"] if state.get("plan_iterations", 0) else 0
     goto = "research_team"
     try:
-        current_plan = repair_json_output(current_plan)
+        # Handle both string and dict types for current_plan
+        if isinstance(current_plan, dict):
+            new_plan = current_plan
+        else:
+            current_plan = repair_json_output(current_plan)
+            new_plan = json.loads(current_plan)
+        
         # increment the plan iterations
         plan_iterations += 1
-        # parse the plan
-        new_plan = json.loads(current_plan)
+        
         if new_plan["has_enough_context"]:
             goto = "reporter"
-    except json.JSONDecodeError:
-        logger.warning("Planner response is not a valid JSON")
+    except (json.JSONDecodeError, TypeError) as e:
+        logger.warning(f"Planner response is not a valid JSON: {e}")
         if plan_iterations > 1:  # the plan_iterations is increased before this check
             return Command(goto="reporter")
         else:
@@ -200,6 +244,7 @@ def human_feedback_node(
             "current_plan": Plan.model_validate(new_plan),
             "plan_iterations": plan_iterations,
             "locale": new_plan["locale"],
+            "user_background": state.get("user_background"),  # Preserve user_background
         },
         goto=goto,
     )
@@ -211,7 +256,7 @@ def coordinator_node(
     """Coordinator node that communicate with customers."""
     logger.info("Coordinator talking.")
     configurable = Configuration.from_runnable_config(config)
-    messages = apply_prompt_template("coordinator", state)
+    messages = apply_prompt_template("coordinator", state, configurable)
     response = (
         get_llm_by_type(AGENT_LLM_MAP["coordinator"])
         .bind_tools([handoff_to_planner])
@@ -222,6 +267,7 @@ def coordinator_node(
     goto = "__end__"
     locale = state.get("locale", "en-US")  # Default locale if not specified
     research_topic = state.get("research_topic", "")
+    user_background = configurable.user_background if configurable.user_background else None
 
     if len(response.tool_calls) > 0:
         goto = "planner"
@@ -251,6 +297,7 @@ def coordinator_node(
             "locale": locale,
             "research_topic": research_topic,
             "resources": configurable.resources,
+            "user_background": user_background,
         },
         goto=goto,
     )
@@ -268,6 +315,7 @@ def reporter_node(state: State, config: RunnableConfig):
             )
         ],
         "locale": state.get("locale", "en-US"),
+        "user_background": state.get("user_background"),
     }
     invoke_messages = apply_prompt_template("reporter", input_, configurable)
     observations = state.get("observations", [])
@@ -340,6 +388,7 @@ async def _execute_agent_step(
             )
         ],
         "report_style": configurable.report_style,
+        "user_background": state.get("user_background"),
     }
 
     # Add citation reminder for researcher agent

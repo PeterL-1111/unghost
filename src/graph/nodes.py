@@ -546,22 +546,30 @@ async def researcher_node(
     @tool
     def linkedin_research_tool(person_name: str, company_name: str = None, job_title: str = None):
         """Research LinkedIn profile for comprehensive professional insights."""
-        return linkedin_profile_scraper(person_name, company_name, job_title)
+        result = linkedin_profile_scraper(person_name, company_name, job_title)
+        # Convert dict to JSON string for LangChain compatibility
+        return json.dumps(result, ensure_ascii=False) if isinstance(result, dict) else str(result)
     
     @tool
     def company_research_tool(company_name: str):
         """Research company information for context and personalization."""
-        return company_information_retriever(company_name)
+        result = company_information_retriever(company_name)
+        # Convert dict to JSON string for LangChain compatibility
+        return json.dumps(result, ensure_ascii=False) if isinstance(result, dict) else str(result)
     
     @tool
     def social_media_research_tool(person_name: str, company_name: str = None):
         """Analyze social media activity for communication style and interests."""
-        return social_media_activity_analyzer(person_name, company_name)
+        result = social_media_activity_analyzer(person_name, company_name)
+        # Convert dict to JSON string for LangChain compatibility
+        return json.dumps(result, ensure_ascii=False) if isinstance(result, dict) else str(result)
     
     @tool
     def thought_leadership_research_tool(person_name: str, company_name: str = None):
         """Find public speaking and publications for expertise and influence."""
-        return public_speaking_publication_tracker(person_name, company_name)
+        result = public_speaking_publication_tracker(person_name, company_name)
+        # Convert dict to JSON string for LangChain compatibility
+        return json.dumps(result, ensure_ascii=False) if isinstance(result, dict) else str(result)
     
     default_tools.extend([
         linkedin_research_tool, 
@@ -587,26 +595,35 @@ async def strategizer_node(
     from src.mcp_tools.social_media_activity_tool import social_media_activity_analyzer
     from src.mcp_tools.public_speaking_publication_tool import public_speaking_publication_tracker
     from langchain_core.tools import tool
+    import json
     
     @tool
     def linkedin_insights_tool(person_name: str, company_name: str = None, job_title: str = None):
         """Access LinkedIn profile insights for strategy formulation."""
-        return linkedin_profile_scraper(person_name, company_name, job_title)
+        result = linkedin_profile_scraper(person_name, company_name, job_title)
+        # Convert dict to JSON string for LangChain compatibility
+        return json.dumps(result, ensure_ascii=False) if isinstance(result, dict) else str(result)
     
     @tool
     def company_insights_tool(company_name: str):
         """Access company information for strategic context."""
-        return company_information_retriever(company_name)
+        result = company_information_retriever(company_name)
+        # Convert dict to JSON string for LangChain compatibility
+        return json.dumps(result, ensure_ascii=False) if isinstance(result, dict) else str(result)
     
     @tool
     def communication_style_tool(person_name: str, company_name: str = None):
         """Access social media analysis for communication style insights."""
-        return social_media_activity_analyzer(person_name, company_name)
+        result = social_media_activity_analyzer(person_name, company_name)
+        # Convert dict to JSON string for LangChain compatibility
+        return json.dumps(result, ensure_ascii=False) if isinstance(result, dict) else str(result)
     
     @tool
     def expertise_insights_tool(person_name: str, company_name: str = None):
         """Access thought leadership data for expertise insights."""
-        return public_speaking_publication_tracker(person_name, company_name)
+        result = public_speaking_publication_tracker(person_name, company_name)
+        # Convert dict to JSON string for LangChain compatibility
+        return json.dumps(result, ensure_ascii=False) if isinstance(result, dict) else str(result)
     
     default_tools.extend([
         linkedin_insights_tool, 

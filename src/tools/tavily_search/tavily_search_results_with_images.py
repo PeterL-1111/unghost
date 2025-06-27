@@ -105,7 +105,7 @@ class TavilySearchResultsWithImages(TavilySearchResults):  # type: ignore[overri
         self,
         query: str,
         run_manager: Optional[CallbackManagerForToolRun] = None,
-    ) -> Union[List[Dict[str, str]], str]:
+    ) -> str:
         """Use the tool."""
         # TODO: remove try/except, should be handled by BaseTool
         try:
@@ -124,13 +124,14 @@ class TavilySearchResultsWithImages(TavilySearchResults):  # type: ignore[overri
             return repr(e)
         cleaned_results = self.api_wrapper.clean_results_with_images(raw_results)
         print("sync", json.dumps(cleaned_results, indent=2, ensure_ascii=False))
-        return cleaned_results
+        # Return as JSON string instead of list to avoid LangChain compatibility issues
+        return json.dumps(cleaned_results, ensure_ascii=False)
 
     async def _arun(
         self,
         query: str,
         run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
-    ) -> Union[List[Dict[str, str]], str]:
+    ) -> str:
         """Use the tool asynchronously."""
         try:
             raw_results = await self.api_wrapper.raw_results_async(
@@ -148,4 +149,5 @@ class TavilySearchResultsWithImages(TavilySearchResults):  # type: ignore[overri
             return repr(e)
         cleaned_results = self.api_wrapper.clean_results_with_images(raw_results)
         print("async", json.dumps(cleaned_results, indent=2, ensure_ascii=False))
-        return cleaned_results
+        # Return as JSON string instead of list to avoid LangChain compatibility issues
+        return json.dumps(cleaned_results, ensure_ascii=False)

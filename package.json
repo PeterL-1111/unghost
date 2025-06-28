@@ -1,20 +1,15 @@
 {
-  "name": "unghost-agent",
+  "name": "personaforge-webcontainer",
   "version": "1.0.0",
-  "description": "AI-powered cold outreach specialist",
-  "main": "main.py",
+  "description": "PersonaForge - The Ultimate Persona-Driven Outreach Engine",
   "scripts": {
-    "dev": "python main.py --interactive",
-    "dev-uv": "uv run python main.py --interactive",
-    "setup": "python -m pip install -r requirements.txt",
-    "setup-uv": "uv sync",
-    "start": "python server.py",
-    "start-uv": "uv run python server.py",
-    "setup-venv": "python -m venv venv && source venv/bin/activate && python -m pip install --upgrade pip && python -m pip install -r requirements.txt"
+    "install-deps": "pip install -r requirements.txt",
+    "start-backend": "python run.py",
+    "start-frontend": "cd front && npm install && npm run dev",
+    "dev": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "setup": "npm run install-deps && cd front && npm install"
   },
-  "keywords": ["ai", "outreach", "personalization", "cold-email"],
-  "author": "Peter Liu",
-  "license": "MIT",
-  "devDependencies": {},
-  "dependencies": {}
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
 }

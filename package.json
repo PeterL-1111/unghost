@@ -1,0 +1,15 @@
+{
+  "name": "unghost-agent",
+  "version": "1.0.0",
+  "description": "AI-powered personalized cold outreach message generation",
+  "scripts": {
+    "install-python-deps": "python3 -m pip install --upgrade pip && python3 -m pip install -r requirements.txt",
+    "dev": "python3 main.py --interactive",
+    "start": "python3 server.py",
+    "web": "cd front && npm run dev",
+    "setup": "npm run install-python-deps"
+  },
+  "dependencies": {
+    "task-master-ai": "^0.18.0"
+  }
+}

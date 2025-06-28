@@ -24,63 +24,55 @@ def setup_environment():
     """Setup environment variables"""
     env_file = Path(".env")
     if not env_file.exists():
-        print("⚠️  .env file not found. Please create one based on .env.example")
+        print("⚠️  .env file not found. Creating from template...")
+        env_example = Path(".env.example")
+        if env_example.exists():
+            with open(env_example, "r") as src, open(env_file, "w") as dst:
+                dst.write(src.read())
+            print("✅ Created .env file from template")
+        else:
+            print("⚠️  .env.example file not found. Please create a .env file manually.")
         return False
     
-    from dotenv import load_dotenv
-    load_dotenv()
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+        print("✅ Environment loaded from .env file")
+    except ImportError:
+        print("⚠️  python-dotenv not installed. Environment variables may not be loaded.")
     
-    # Check for required API keys
-    required_keys = ["OPENAI_API_KEY", "TAVILY_API_KEY"]
-    missing_keys = []
-    
-    for key in required_keys:
-        if not os.getenv(key) or os.getenv(key) == f"your_{key.lower()}_here":
-            missing_keys.append(key)
-    
-    if missing_keys:
-        print(f"⚠️  Missing API keys in .env: {', '.join(missing_keys)}")
-        print("Please add your API keys to the .env file")
-        return False
-    
-    print("✅ Environment setup complete")
     return True
 
 def main():
     """Main entry point"""
-    print("🦌 Deer AI Research Assistant")
+    print("👻 Unghost Agent - Alternative Launcher")
     print("=" * 40)
     
-    # Check dependencies
-    if not check_dependencies():
-        sys.exit(1)
-    
     # Setup environment
-    if not setup_environment():
-        print("⚠️  Continuing with incomplete setup...")
+    setup_environment()
+    
+    # Check if we should run in interactive mode
+    interactive = "--interactive" in sys.argv
     
     # Import and run the main application
     try:
-        from src.server.app import app
-        import uvicorn
-        
-        print("🚀 Starting server...")
-        uvicorn.run(
-            "src.server.app:app",
-            host="0.0.0.0",
-            port=8000,
-            reload=True
-        )
-    except ImportError as e:
-        print(f"❌ Failed to import application: {e}")
-        print("Trying alternative main.py...")
-        
-        # Fallback to main.py if it exists
-        if Path("main.py").exists():
-            subprocess.run([sys.executable, "main.py"] + sys.argv[1:])
+        if interactive:
+            print("🚀 Starting in interactive mode...")
+            if os.path.exists("main.py"):
+                subprocess.run([sys.executable, "main.py", "--interactive"])
+            else:
+                print("❌ main.py not found")
+                sys.exit(1)
         else:
-            print("❌ No main.py found")
-            sys.exit(1)
+            print("🚀 Starting server mode...")
+            if os.path.exists("server.py"):
+                subprocess.run([sys.executable, "server.py"])
+            else:
+                print("❌ server.py not found")
+                sys.exit(1)
+    except Exception as e:
+        print(f"❌ Error running application: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

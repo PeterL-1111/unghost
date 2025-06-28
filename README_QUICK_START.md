@@ -4,97 +4,98 @@ This guide provides multiple ways to set up Unghost Agent, including fallback op
 
 ## Setup Options
 
-### Option 1: With UV (Recommended)
-
-If you have `uv` installed:
+### Option 1: Simplest Method (No Virtual Environment)
 
 ```bash
-# Install dependencies
-uv sync
+# Install dependencies directly
+python -m pip install -r requirements.txt
 
-# Run the application
-npm run dev-uv
-# or directly: uv run python main.py --interactive
+# Run the application with the alternative launcher
+python run.py --interactive
 ```
 
-### Option 2: Without UV (Fallback)
-
-If `uv` is not available, use standard Python tools:
+### Option 2: With Virtual Environment (Recommended)
 
 #### Linux/macOS:
 ```bash
-# Run fallback setup
-chmod +x setup-fallback.sh
-./setup-fallback.sh
-
-# Activate virtual environment
+# Create and activate virtual environment
+python -m venv venv
 source venv/bin/activate
-
-# Run the application
-python main.py --interactive
-```
-
-#### Windows:
-```powershell
-# Run fallback setup
-.\setup-fallback.ps1
-
-# Activate virtual environment
-venv\Scripts\Activate.ps1
-
-# Run the application
-python main.py --interactive
-```
-
-### Option 3: Manual Setup
-
-```bash
-# Create virtual environment
-python3 -m venv venv
-
-# Activate it
-source venv/bin/activate  # Linux/macOS
-# or
-venv\Scripts\Activate.ps1  # Windows
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Copy environment file
-cp .env.example .env
-
-# Edit .env with your API keys
-# Then run:
+# Run the application
 python main.py --interactive
+# or
+python run.py --interactive
 ```
 
-## Installing UV (Optional)
+#### Windows:
+```powershell
+# Create and activate virtual environment
+python -m venv venv
+venv\Scripts\Activate.ps1
 
-If you want to use `uv` for faster dependency management:
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the application
+python main.py --interactive
+# or
+python run.py --interactive
+```
+
+### Option 3: Using npm scripts
 
 ```bash
-# Install UV
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# Setup with virtual environment
+npm run setup-venv
 
-# Or with pip
-pip install uv
-
-# Then use the UV commands
-uv sync
-npm run dev-uv
+# Run the application
+npm run dev
 ```
+
+## Frontend Setup
+
+After setting up the backend:
+
+```bash
+# Navigate to frontend directory
+cd front
+
+# Install dependencies
+npm install
+# or if you have pnpm
+pnpm install
+
+# Start the frontend development server
+npm run dev
+# or
+pnpm run dev
+```
+
+## Configuration
+
+1. Copy the example environment file if you haven't already:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` with your API keys:
+   - `TAVILY_API_KEY` - Required for web search
+   - `OPENAI_API_KEY` or another LLM provider key
 
 ## Troubleshooting
 
-- **"uv command not found"**: Use the fallback setup scripts or install `uv` first
-- **Python version issues**: Ensure you have Python 3.12+ installed
-- **Permission errors**: Make sure setup scripts are executable (`chmod +x setup-fallback.sh`)
+- **Python module errors**: Make sure you've installed all dependencies with `pip install -r requirements.txt`
+- **Environment issues**: Ensure you're using Python 3.12+ and have activated your virtual environment
+- **API key errors**: Check that your `.env` file contains the necessary API keys
 
-## Next Steps
+## Running the Web Interface
 
-1. Edit your `.env` file with the required API keys
-2. Run the application using one of the methods above
-3. Access the web interface at `http://localhost:3000` (if frontend is set up)
-4. Or use the console interface directly
+Once the backend is running, you can access:
+- API: http://localhost:8000
+- Web UI: http://localhost:3000 (after starting the frontend)
 
 For detailed configuration, see the main README.md file.

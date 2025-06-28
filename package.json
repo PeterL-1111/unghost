@@ -1,15 +1,19 @@
 {
   "name": "unghost-agent",
   "version": "1.0.0",
-  "description": "AI-powered personalized cold outreach message generation",
+  "description": "AI-powered cold outreach specialist",
+  "main": "main.py",
   "scripts": {
-    "install-python-deps": "uv sync",
-    "dev": "uv run python main.py --interactive",
-    "start": "uv run python server.py",
-    "web": "cd front && npm run dev",
-    "setup": "npm run install-python-deps"
+    "dev": "python main.py --interactive",
+    "dev-uv": "uv run python main.py --interactive",
+    "setup": "python -m pip install -r requirements.txt",
+    "setup-uv": "uv sync",
+    "start": "python server.py",
+    "start-uv": "uv run python server.py"
   },
-  "dependencies": {
-    "task-master-ai": "^0.18.0"
-  }
+  "keywords": ["ai", "outreach", "personalization", "cold-email"],
+  "author": "Peter Liu",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
 }

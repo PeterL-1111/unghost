@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Alternative entry point that doesn't require uv
+WebContainer-compatible version without signal handling.
 """
 import sys
 import subprocess
@@ -73,6 +74,9 @@ def main():
     except Exception as e:
         print(f"❌ Error running application: {e}")
         sys.exit(1)
+    except KeyboardInterrupt:
+        print("🛑 Received keyboard interrupt. Shutting down...")
+        sys.exit(0)
 
 if __name__ == "__main__":
     main()

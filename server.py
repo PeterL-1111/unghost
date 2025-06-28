@@ -3,11 +3,11 @@
 
 """
 Server script for running the Unghost Agent API.
+WebContainer-compatible version without signal handling.
 """
 
 import argparse
 import logging
-import signal
 import sys
 import uvicorn
 
@@ -20,15 +20,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def handle_shutdown(signum, frame):
-    """Handle graceful shutdown on SIGTERM/SIGINT"""
-    logger.info("Received shutdown signal. Starting graceful shutdown...")
+def handle_shutdown():
+    """Handle graceful shutdown"""
+    logger.info("Starting graceful shutdown...")
     sys.exit(0)
 
-
-# Register signal handlers
-signal.signal(signal.SIGTERM, handle_shutdown)
-signal.signal(signal.SIGINT, handle_shutdown)
 
 if __name__ == "__main__":
     # Parse command line arguments
@@ -77,3 +73,6 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"Failed to start server: {str(e)}")
         sys.exit(1)
+    except KeyboardInterrupt:
+        logger.info("Received keyboard interrupt. Shutting down...")
+        handle_shutdown()

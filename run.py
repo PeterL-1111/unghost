@@ -3,9 +3,31 @@
 Alternative entry point that doesn't require uv
 """
 import sys
-import subprocess
 import os
 from pathlib import Path
+
+# Better platform detection for webcontainer environments
+def is_webcontainer_environment():
+    """Detect if running in a webcontainer/WASM environment"""
+    return (
+        sys.platform in ("emscripten", "wasm", "wasm32") or
+        hasattr(sys, 'platform') and 'wasm' in sys.platform or
+        os.getenv('BOLT_ENV') == 'true' or  # bolt.new specific
+        os.getenv('WEBCONTAINER') == 'true' or  # webcontainer specific
+        'webcontainer' in os.getcwd().lower() or
+        not hasattr(os, 'fork')  # Most webcontainers don't support fork
+    )
+
+# Conditional imports based on environment
+if not is_webcontainer_environment():
+    try:
+        import subprocess
+    except ImportError:
+        print("⚠️  subprocess module not available, some features may be limited")
+        subprocess = None
+else:
+    print("🌐 Detected webcontainer environment - subprocess disabled")
+    subprocess = None
 
 def check_dependencies():
     """Check if required dependencies are installed"""
@@ -27,8 +49,19 @@ def setup_environment():
         print("⚠️  .env file not found. Please create one based on .env.example")
         return False
     
-    from dotenv import load_dotenv
-    load_dotenv()
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        print("⚠️  python-dotenv not installed, loading environment manually")
+        # Manual .env loading for webcontainer environments
+        if env_file.exists():
+            with open(env_file, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        key, value = line.split('=', 1)
+                        os.environ[key.strip()] = value.strip().strip('"\'')
     
     # Check for required API keys
     required_keys = ["OPENAI_API_KEY", "TAVILY_API_KEY"]
@@ -51,6 +84,9 @@ def main():
     print("🦌 Deer AI Research Assistant")
     print("=" * 40)
     
+    if is_webcontainer_environment():
+        print("🌐 Running in webcontainer environment (bolt.new)")
+    
     # Check dependencies
     if not check_dependencies():
         sys.exit(1)
@@ -69,7 +105,7 @@ def main():
             "src.server.app:app",
             host="0.0.0.0",
             port=8000,
-            reload=True
+            reload=False  # Disable reload in webcontainers to avoid subprocess issues
         )
     except ImportError as e:
         print(f"❌ Failed to import application: {e}")
@@ -77,7 +113,22 @@ def main():
         
         # Fallback to main.py if it exists
         if Path("main.py").exists():
-            subprocess.run([sys.executable, "main.py"] + sys.argv[1:])
+            if subprocess:
+                subprocess.run([sys.executable, "main.py"] + sys.argv[1:])
+            else:
+                print("❌ Subprocess not available in this environment")
+                print("Trying to import and run main.py directly...")
+                try:
+                    import main
+                    # Try to run main directly without subprocess
+                    if hasattr(main, 'main'):
+                        main.main()
+                    else:
+                        print("❌ No main() function found in main.py")
+                        sys.exit(1)
+                except Exception as main_error:
+                    print(f"❌ Failed to run main.py: {main_error}")
+                    sys.exit(1)
         else:
             print("❌ No main.py found")
             sys.exit(1)
